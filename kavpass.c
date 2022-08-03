@@ -5,12 +5,14 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
-size_t BUF_SIZE;
+size_t BUF_SIZE = 256;
 typedef struct {
     char *symb;
     char *l_let;
     char *u_let;
     char *ints;
+    bool test_symb;
+    char *TESTING_SYMBOLS;
     char *Pass;
     bool failed;
     char tmp_c;
@@ -26,7 +28,7 @@ void init(Password *pass, size_t BUFFER) {
 
 Password pass, *p = &pass;
 void return_ran(int line) {
-    if (line >=5) {
+    if (line >=6) {
         p->failed = true;
     }else {
         switch(line) {
@@ -41,6 +43,9 @@ void return_ran(int line) {
                 break;
             case 4:
                 p->tmp_c = p->ints[rand() % strlen(p->ints) + 1];
+                break;
+            case 5:
+                p->tmp_c = p->TESTING_SYMBOLS[rand() % strlen(p->TESTING_SYMBOLS) + 1];
                 break;
             default:
                 p->failed = true;
@@ -58,7 +63,11 @@ void set_pass(size_t len) {
     srand(time(NULL));
     void set_q() {
         for(size_t i = 0; i < len; i++) {
-            return_ran(rand() % 4 + 1);
+            if (p->test_symb) {
+                return_ran(rand() % 5 + 1);
+            } else {
+                return_ran(rand() % 4 + 1);
+            }
             p->Pass[i] = p->tmp_c;
             if (p->failed) {
                 return;
@@ -76,6 +85,7 @@ struct option long_options[] = {
     { "length",     required_argument,  0,      'l' },
     { "help",       no_argument,        0,      'h' },
     { "output",     required_argument,  0,      'o' },
+    { "testing",    required_argument,  0,      't' },
     { "verbose",    no_argument,        0,      'v' },
     { 0, 0, 0, 0 }
 };
@@ -90,17 +100,21 @@ void write_file(char *str, char *path) {
 }
 
 int main(int argc, char **argv) {
-    init(p,20);
     int len, c, option_index = 0;
     bool verbose = false, made_pass = false, tmp = false;
     char *file;
-    while((c = getopt_long(argc, argv, "hvo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "ht:vo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'h':
                 usage(); 
                 break;
             case 'v':
                 verbose = true;
+                break;
+            case 't':
+                p->test_symb = true;
+                p->TESTING_SYMBOLS = malloc(BUF_SIZE * sizeof(char*));
+                p->TESTING_SYMBOLS = optarg;
                 break;
             case 'o':
                 file = optarg;
@@ -123,6 +137,7 @@ int main(int argc, char **argv) {
         }
     }
     if (commence) {
+        init(p,BUF_SIZE);
         set_pass(len);
         if (verbose) {
             printf("Password: %s\nWith Length: %ld\n",p->Pass, strlen(p->Pass));
@@ -132,6 +147,7 @@ int main(int argc, char **argv) {
         }
     }
     if (tmp) {
+        init(p,BUF_SIZE);
         if (made_pass) {
             write_file(p->Pass, file);
             if (verbose) {
@@ -142,5 +158,7 @@ int main(int argc, char **argv) {
             printf("Password not generated. Run $ kavpass -h\n");
         }
     }
-    free(p->Pass);
+    if (p->Pass) {
+        free(p->Pass);
+    }
 }
