@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,6 +57,8 @@ void usage() {
     printf("Usage:\n");
     printf("\t-l\t--length\t|\tSpecifies the length.\n");
     printf("\t-o\t--output\t|\tFile to output to.\n");
+    printf("\t-t\t--testing\t|\tTesting feature to add your own text.\n");
+    printf("\t-v\t--verbose\t|\tVerbose output.\n"); 
 }
 void set_pass(size_t len) {
     srand(time(NULL));
