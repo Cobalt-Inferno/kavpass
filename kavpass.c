@@ -15,6 +15,10 @@ int pull_rand() {
         return EXIT_FAILURE;
     }
     size_t retv = fread(buff, sizeof(*buff), ARR_S(buff), file); /* I have to add some error checking */
+    if (retv != ARR_S(buff)) {
+        perror("fread(): failed.");
+        return EXIT_FAILURE;
+    }
     int temp = buff[0];
     fclose(file);
     return temp;
@@ -89,9 +93,9 @@ void set_pass(size_t len) {
         p->Pass[strlen(p->Pass) + 1] = '$';
         for (size_t i = strlen(p->Pass); i < len; i++) {
             if (p->test_symb) {
-                return_ran(pull_rand() % 5 + 1);
+                return_ran(rand() % 5 + 1);
             } else {
-                return_ran(pull_rand() % 4 + 1);
+                return_ran(rand() % 4 + 1);
             }
             p->Pass[i] = p->tmp_c;
             if (p->failed) {
@@ -102,9 +106,9 @@ void set_pass(size_t len) {
     else {
         for(size_t i = 0; i < len; i++) {
             if (p->test_symb) {
-                return_ran(pull_rand() % 5 + 1);
+                return_ran(rand() % 5 + 1);
             } else {
-                return_ran(pull_rand() % 4 + 1);
+                return_ran(rand() % 4 + 1);
             }
             p->Pass[i] = p->tmp_c;
             if (p->failed) {
