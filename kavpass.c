@@ -9,12 +9,14 @@ typedef struct {
     char *symb;
     char *l_let;
     char *u_let;
+    char *salt;
     char *ints;
     bool test_symb;
     char *TESTING_SYMBOLS;
     char *Pass;
     bool failed;
     char tmp_c;
+    bool salted;
 } Password;
 
 void init(Password *pass, size_t BUFFER) {
@@ -63,15 +65,35 @@ void usage() {
 void set_pass(size_t len) {
     srand(time(NULL));
     LOOP:
-    for(size_t i = 0; i < len; i++) {
-        if (p->test_symb) {
-            return_ran(rand() % 5 + 1);
-        } else {
-            return_ran(rand() % 4 + 1);
+    if (p->salted) {
+        p->Pass[0] = "$";
+        for(size_t j = 1; j < strlen(p->salt) + 1; j++) {
+            p->Pass[j] = p->salt[j];
         }
-        p->Pass[i] = p->tmp_c;
-        if (p->failed) {
-            return;
+        p->Pass[strlen(p->Pass) + 1] = "$";
+        for (size_t i = strlen(p->Pass); i < len; i++) {
+            if (p->test_symb) {
+                return_ran(rand() % 5 + 1);
+            } else {
+                return_ran(rand() % 4 + 1);
+            }
+            p->Pass[i] = p->tmp_c;
+            if (p->failed) {
+                return;
+            }
+        }
+    }
+    else {
+        for(size_t i = 0; i < len; i++) {
+            if (p->test_symb) {
+                return_ran(rand() % 5 + 1);
+            } else {
+                return_ran(rand() % 4 + 1);
+            }
+            p->Pass[i] = p->tmp_c;
+            if (p->failed) {
+                return;
+            }
         }
     }
     if (strlen(p->Pass) != len) {
@@ -103,7 +125,7 @@ int main(int argc, char **argv) {
     int len, c, option_index = 0;
     bool verbose = false, made_pass = false, tmp = false;
     char *file;
-    while((c = getopt_long(argc, argv, "ht:vo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "ht:vs:o:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'h':
                 usage(); 
@@ -115,6 +137,10 @@ int main(int argc, char **argv) {
                 p->test_symb = true;
                 p->TESTING_SYMBOLS = malloc(BUF_SIZE * sizeof(char*));
                 p->TESTING_SYMBOLS = optarg;
+                break;
+            case 's':
+                strcat(p->salt, optarg);
+                p->salted = true;
                 break;
             case 'o':
                 file = optarg;
