@@ -62,21 +62,20 @@ void usage() {
 }
 void set_pass(size_t len) {
     srand(time(NULL));
-    void set_q() {
-        for(size_t i = 0; i < len; i++) {
-            if (p->test_symb) {
-                return_ran(rand() % 5 + 1);
-            } else {
-                return_ran(rand() % 4 + 1);
-            }
-            p->Pass[i] = p->tmp_c;
-            if (p->failed) {
-                return;
-            }
+    LOOP:
+    for(size_t i = 0; i < len; i++) {
+        if (p->test_symb) {
+            return_ran(rand() % 5 + 1);
+        } else {
+            return_ran(rand() % 4 + 1);
+        }
+        p->Pass[i] = p->tmp_c;
+        if (p->failed) {
+            return;
         }
     }
-    while (strlen(p->Pass) != len) {
-        set_q();
+    if (strlen(p->Pass) != len) {
+        goto LOOP;
     }
 }
 
