@@ -4,7 +4,24 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
-size_t BUF_SIZE = 256;
+#include <stdint.h>
+
+#define ARR_S(arr) (sizeof(arr) / sizeof((arr)[0])) 
+int pull_rand() {
+    FILE * file = fopen("/dev/random", "r");            
+    unsigned char buff[10];
+    if (!file) {
+        perror("fopen");
+        return EXIT_FAILURE;
+    }
+    size_t retv = fread(buff, sizeof(*buff), ARR_S(buff), file); /* I have to add some error checking */
+    int temp = buff[0];
+    fclose(file);
+    return temp;
+}
+    
+
+size_t BUF_SIZE = 2096; 
 typedef struct {
     char *symb;
     char *l_let;
@@ -34,19 +51,19 @@ void return_ran(int line) {
     }else {
         switch(line) {
             case 1:
-                p->tmp_c = p->symb[rand() % strlen(p->symb) + 1];
+                p->tmp_c = p->symb[pull_rand() % strlen(p->symb)];
                 break;
             case 2:
-                p->tmp_c = p->l_let[rand() % strlen(p->l_let) + 1];
+                p->tmp_c = p->l_let[pull_rand() % strlen(p->l_let)];
                 break;
             case 3:
-                p->tmp_c = p->u_let[rand() % strlen(p->u_let) + 1];
+                p->tmp_c = p->u_let[pull_rand() % strlen(p->u_let)];
                 break;
             case 4:
-                p->tmp_c = p->ints[rand() % strlen(p->ints) + 1];
+                p->tmp_c = p->ints[pull_rand() % strlen(p->ints)];
                 break;
             case 5:
-                p->tmp_c = p->TESTING_SYMBOLS[rand() % strlen(p->TESTING_SYMBOLS) + 1];
+                p->tmp_c = p->TESTING_SYMBOLS[pull_rand() % strlen(p->TESTING_SYMBOLS)];
                 break;
             default:
                 p->failed = true;
@@ -63,7 +80,6 @@ void usage() {
     printf("\t-v\t--verbose\t|\tVerbose output.\n"); 
 }
 void set_pass(size_t len) {
-    srand(time(NULL));
     LOOP:
     if (p->salted) {
         p->Pass[0] = '$';
@@ -73,9 +89,9 @@ void set_pass(size_t len) {
         p->Pass[strlen(p->Pass) + 1] = '$';
         for (size_t i = strlen(p->Pass); i < len; i++) {
             if (p->test_symb) {
-                return_ran(rand() % 5 + 1);
+                return_ran(pull_rand() % 5 + 1);
             } else {
-                return_ran(rand() % 4 + 1);
+                return_ran(pull_rand() % 4 + 1);
             }
             p->Pass[i] = p->tmp_c;
             if (p->failed) {
@@ -86,9 +102,9 @@ void set_pass(size_t len) {
     else {
         for(size_t i = 0; i < len; i++) {
             if (p->test_symb) {
-                return_ran(rand() % 5 + 1);
+                return_ran(pull_rand() % 5 + 1);
             } else {
-                return_ran(rand() % 4 + 1);
+                return_ran(pull_rand() % 4 + 1);
             }
             p->Pass[i] = p->tmp_c;
             if (p->failed) {
@@ -101,8 +117,6 @@ void set_pass(size_t len) {
     }
 }
 
-int help;
-
 struct option long_options[] = {
     { "length",     required_argument,  0,      'l' },
     { "help",       no_argument,        0,      'h' },
@@ -112,7 +126,6 @@ struct option long_options[] = {
     { 0, 0, 0, 0 }
 };
 
-bool commence;
 
 
 void write_file(char *str, char *path) {
@@ -123,7 +136,7 @@ void write_file(char *str, char *path) {
 
 int main(int argc, char **argv) {
     int len, c, option_index = 0;
-    bool verbose = false, made_pass = false, tmp = false;
+    bool verbose = false, made_pass = false, tmp = false, commence = false;
     char *file;
     while((c = getopt_long(argc, argv, "ht:vs:o:l:", long_options, &option_index)) != -1) {
         switch(c) {
@@ -166,7 +179,7 @@ int main(int argc, char **argv) {
         init(p,BUF_SIZE);
         set_pass(len);
         if (verbose) {
-            printf("Password: %s\nWith Length: %ld\n",p->Pass, strlen(p->Pass));
+            printf("Password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
         }
         else {
             printf("%s\n",p->Pass);
@@ -181,7 +194,7 @@ int main(int argc, char **argv) {
             }
         }
         else {
-            printf("Password not generated. Run $ kavpass -h\n");
+            fprintf(stderr, "Password not generated. Run $ kavpass -h\n");
         }
     }
     if (p->Pass) {
