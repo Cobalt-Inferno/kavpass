@@ -66,11 +66,11 @@ void set_pass(size_t len) {
     srand(time(NULL));
     LOOP:
     if (p->salted) {
-        p->Pass[0] = "$";
+        p->Pass[0] = '$';
         for(size_t j = 1; j < strlen(p->salt) + 1; j++) {
             p->Pass[j] = p->salt[j];
         }
-        p->Pass[strlen(p->Pass) + 1] = "$";
+        p->Pass[strlen(p->Pass) + 1] = '$';
         for (size_t i = strlen(p->Pass); i < len; i++) {
             if (p->test_symb) {
                 return_ran(rand() % 5 + 1);
