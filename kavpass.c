@@ -30,14 +30,12 @@ typedef struct {
     char *symb;
     char *l_let;
     char *u_let;
-    char *salt;
     char *ints;
-    bool test_symb;
-    char *TESTING_SYMBOLS;
     char *Pass;
     bool failed;
     char tmp_c;
-    bool salted;
+    char *test_symb;
+    bool test_symb_b;
 } Password;
 
 void init(Password *pass, size_t BUFFER) {
@@ -45,11 +43,14 @@ void init(Password *pass, size_t BUFFER) {
     pass->l_let = "qwertyuiopasdfghjklzxcvbnm";
     pass->u_let = "QWERTYUIOPASDFGHJKLZXCVBNM";
     pass->ints = "1234567890";
-    pass->Pass = malloc(BUFFER * sizeof(char*));
+    pass->test_symb = "™€‰—®©☺⚛";
+    printf("%d\n",strlen(pass->test_symb));
+    pass->Pass = malloc(BUFFER * sizeof(char));
 }
 
 Password pass, *p = &pass;
-void return_ran(int line) {
+void safe_return_ran(int line) {
+    line = 5;
     if (line >=6) {
         p->failed = true;
     }else {
@@ -67,53 +68,60 @@ void return_ran(int line) {
                 p->tmp_c = p->ints[pull_rand() % strlen(p->ints)];
                 break;
             case 5:
-                p->tmp_c = p->TESTING_SYMBOLS[pull_rand() % strlen(p->TESTING_SYMBOLS)];
-                break;
+                p->tmp_c = p->test_symb[pull_rand() % strlen(p->test_symb)];
             default:
                 p->failed = true;
         }
     }
 }
 
+void unsafe_return_ran(int line) {
+    srand(time(NULL));
+    if (line >=6) {
+        p->failed = true;
+    }else {
+        switch(line) {
+            case 1:
+                p->tmp_c = p->symb[rand() % strlen(p->symb)];
+                break;
+            case 2:
+                p->tmp_c = p->l_let[rand() % strlen(p->l_let)];
+                break;
+            case 3:
+                p->tmp_c = p->u_let[rand() % strlen(p->u_let)];
+                break;
+            case 4:
+                p->tmp_c = p->ints[rand() % strlen(p->ints)];
+                break;
+            case 5:
+                p->tmp_c = p->test_symb[rand() % strlen(p->test_symb)];
+            default:
+                p->failed = true;
+        }
+    }
+}
+
+
+
 void usage() {
     printf("Program: Kavpass\n");
     printf("Usage:\n");
     printf("\t-l\t--length\t|\tSpecifies the length.\n");
     printf("\t-o\t--output\t|\tFile to output to.\n");
-    printf("\t-t\t--testing\t|\tTesting feature to add your own text.\n");
     printf("\t-v\t--verbose\t|\tVerbose output.\n"); 
+    printf("\t-e\t--extra-unicode\t|\tAdds extra unicode char support.\n");
 }
-void set_pass(size_t len) {
+void safe_set_pass(size_t len) {
     LOOP:
-    if (p->salted) {
-        p->Pass[0] = '$';
-        for(size_t j = 1; j < strlen(p->salt) + 1; j++) {
-            p->Pass[j] = p->salt[j];
+    for(size_t i = 0; i < len; i++) {
+        if (p->test_symb_b) {
+            safe_return_ran(rand() % 5 + 1);
+        } else {
+            safe_return_ran(rand() % 4 + 1);
         }
-        p->Pass[strlen(p->Pass) + 1] = '$';
-        for (size_t i = strlen(p->Pass); i < len; i++) {
-            if (p->test_symb) {
-                return_ran(rand() % 5 + 1);
-            } else {
-                return_ran(rand() % 4 + 1);
-            }
-            p->Pass[i] = p->tmp_c;
-            if (p->failed) {
-                return;
-            }
-        }
-    }
-    else {
-        for(size_t i = 0; i < len; i++) {
-            if (p->test_symb) {
-                return_ran(rand() % 5 + 1);
-            } else {
-                return_ran(rand() % 4 + 1);
-            }
-            p->Pass[i] = p->tmp_c;
-            if (p->failed) {
-                return;
-            }
+        p->Pass[i] = p->tmp_c;
+        if (p->failed) {
+            return;
         }
     }
     if (strlen(p->Pass) != len) {
@@ -125,8 +133,8 @@ struct option long_options[] = {
     { "length",     required_argument,  0,      'l' },
     { "help",       no_argument,        0,      'h' },
     { "output",     required_argument,  0,      'o' },
-    { "testing",    required_argument,  0,      't' },
     { "verbose",    no_argument,        0,      'v' },
+    { "extra-unicode",  no_argument,    0,      'e' },
     { 0, 0, 0, 0 }
 };
 
@@ -142,22 +150,16 @@ int main(int argc, char **argv) {
     int len, c, option_index = 0;
     bool verbose = false, made_pass = false, tmp = false, commence = false;
     char *file;
-    while((c = getopt_long(argc, argv, "ht:vs:o:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "hevo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'h':
                 usage(); 
                 break;
+            case 'e':
+                p->test_symb_b = true;
+                break;
             case 'v':
                 verbose = true;
-                break;
-            case 't':
-                p->test_symb = true;
-                p->TESTING_SYMBOLS = malloc(BUF_SIZE * sizeof(char*));
-                p->TESTING_SYMBOLS = optarg;
-                break;
-            case 's':
-                strcat(p->salt, optarg);
-                p->salted = true;
                 break;
             case 'o':
                 file = optarg;
@@ -181,7 +183,7 @@ int main(int argc, char **argv) {
     }
     if (commence) {
         init(p,BUF_SIZE);
-        set_pass(len);
+        safe_set_pass(len);
         if (verbose) {
             printf("Password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
         }
