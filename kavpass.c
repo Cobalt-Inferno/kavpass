@@ -213,13 +213,12 @@ void usage() {
     printf("\t-i\t--interactive\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 void safe_set_pass(size_t len) {
-    srand(time(NULL));
     LOOP:
     for(size_t i = 0; i < len; i++) {
         if (p->test_symb_b) {
-            safe_return_ran(rand() % 5 + 1);
+            safe_return_ran(pull_rand() % 5 + 1);
         } else {
-            safe_return_ran(rand() % 4 + 1);
+            safe_return_ran(pull_rand() % 4 + 1);
         }
         p->Pass[i] = p->tmp_c;
         if (p->failed) {
@@ -231,13 +230,12 @@ void safe_set_pass(size_t len) {
     }
 }
 void unsafe_set_pass(size_t len) {
-    srand(time(NULL));
     LOOP:
     for(size_t i = 0; i < len; i++) {
         if (p->test_symb_b) {
-            unsafe_return_ran(rand() % 5 + 1);
+            unsafe_return_ran(pull_rand() % 5 + 1);
         } else {
-            unsafe_return_ran(rand() % 4 + 1);
+            unsafe_return_ran(pull_rand() % 4 + 1);
         }
         p->Pass[i] = p->tmp_c;
         if(p->failed) {
