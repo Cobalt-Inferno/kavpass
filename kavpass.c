@@ -8,6 +8,20 @@
 
 // Kavpassctl stuff
 
+void chop(char *msg) {
+    char *tmp;
+    int i = 0;
+    while(++msg[i]) {
+        if (msg[i] != '\n' || msg[i] != '\0') {
+            tmp[i] = msg[i];
+        }
+        else {
+            tmp = msg;
+        }
+    }
+}
+
+
 typedef struct {
     char *prompt;
     int len;
@@ -35,8 +49,11 @@ void k_parse(char *msg, kavpass *kav) {
             }
         }
     }
-    if (strncmp(token,"PUT", 3) == 0) {
+    else if (strncmp(token,"PUT", 3) == 0) {
         printf("Prompt :: %s | Input :: %s",kav->prompt,kav->input);
+    }
+    else {
+        printf("Command not recognized!\n");
     }
     return;
 }
@@ -161,6 +178,7 @@ void usage() {
     printf("\t-v\t--verbose\t|\tVerbose output.\n"); 
     printf("\t-e\t--extra-unicode\t|\tAdds extra unicode char support.\n");
     printf("\t-F\t--force-unsafe-rng NUM\t|\tReplaces --length and forces the use of an unsafe RNG.\n");
+    printf("\t-i\t--interactive\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 void safe_set_pass(size_t len) {
     LOOP:
@@ -206,6 +224,7 @@ struct option long_options[] = {
     { "force-unsafe-rng",   required_argument,  0,      'F' },
     { "verbose",            no_argument,        0,      'v' },
     { "extra-unicode",      no_argument,        0,      'e' },
+    { "interactive",        no_argument,        0,      'i' },
     { 0, 0, 0, 0 }
 };
 
@@ -221,7 +240,7 @@ int main(int argc, char **argv) {
     int len, c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
     char *file;
-    while((c = getopt_long(argc, argv, "F:hevo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "F:hievo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
                 unsafe = true;
@@ -232,6 +251,9 @@ int main(int argc, char **argv) {
             case 'h':
                 usage(); 
                 break;
+            case 'i':
+                kavpass *kav = malloc(256 * sizeof(kavpass));
+                k_ctl(kav);
             case 'e':
                 p->test_symb_b = true;
                 break;
@@ -308,6 +330,4 @@ int main(int argc, char **argv) {
     if (p->Pass) {
         free(p->Pass);
     }
-    kavpass *pass = malloc(100 * sizeof(kavpass));
-    k_ctl(pass);
 }
