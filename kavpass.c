@@ -10,26 +10,48 @@
 
 
 
+size_t BUF_SIZE = 2096; 
+typedef struct {
+    char *symb;
+    char *l_let;
+    char *u_let;
+    char *ints;
+    char *Pass;
+    bool failed;
+    char tmp_c;
+    char *test_symb;
+    bool test_symb_b;
+} Password;
+int pull_rand();
+void init(Password *pass, size_t BUFFER);
+void safe_return_ran(int line);
+void unsafe_return_ran(int line);
+void usage();
+void safe_set_pass(size_t len);
+void unsafe_set_pass(size_t len);
+void write_file(char *sr, char *path);
+Password pass, *p = &pass;
 typedef struct {
     char *prompt;
     int len;
     char *input;
 } kavpass;
 
+
 void k_parse(char *msg, kavpass *kav) {
-    char *token = strtok(msg, " ");
+    char *token = strtok(msg, " "), *file;
+    bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
     if (strncmp(token,"set", 3) == 0) {
         token = strtok(NULL, " ");
         if (token == NULL) {
             fprintf(stderr, "No prompt -set- value provided.\n");
             return;
         }
-        while(token != NULL) {
+        if (token != NULL) {
             if (strncmp(token, "prompt", 6) == 0) {
                 token = strtok(NULL, " ");
                 if (token == NULL) {
                     fprintf(stderr, "No prompt provided.\n");
-                    break;
                 }
                 int len = strlen(token);
                 if (token[len - 1] == '\n') {
@@ -37,12 +59,21 @@ void k_parse(char *msg, kavpass *kav) {
                 }
                 strcat(token, " ");
                 kav->prompt = token;
-                break;
+            }
+            if (strncmp(token, "length", 6) == 0) {
+                token = strtok(NULL, " ");
+                kav->len = atoi(token);
             }
         }
     }
     else if (strncmp(token,"PUT", 3) == 0) {
         printf("Prompt :: %s| Input :: %s\n",kav->prompt,kav->input);
+    }
+    else if (strncmp(token, "generate", 8) == 0) {
+        init(p,BUF_SIZE);
+        safe_set_pass(kav->len);
+        printf("%s\n",p->Pass);
+        free(p->Pass);
     }
     else if (strncmp(token, "exit", 4) == 0) {
         return;
@@ -88,19 +119,6 @@ int pull_rand() {
 }
     
 
-size_t BUF_SIZE = 2096; 
-typedef struct {
-    char *symb;
-    char *l_let;
-    char *u_let;
-    char *ints;
-    char *Pass;
-    bool failed;
-    char tmp_c;
-    char *test_symb;
-    bool test_symb_b;
-} Password;
-
 void init(Password *pass, size_t BUFFER) {
     pass->symb = "!@#$%^&*()-=+_][{}";
     pass->l_let = "qwertyuiopasdfghjklzxcvbnm";
@@ -110,7 +128,6 @@ void init(Password *pass, size_t BUFFER) {
     pass->Pass = malloc(BUFFER * sizeof(char));
 }
 
-Password pass, *p = &pass;
 void safe_return_ran(int line) {
     if (line >=6) {
         p->failed = true;
