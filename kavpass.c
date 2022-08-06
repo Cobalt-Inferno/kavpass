@@ -4,10 +4,6 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
-#include <stdint.h>
-
-// Kavpassctl stuff
-
 
 
 size_t BUF_SIZE = 2096; 
@@ -17,6 +13,8 @@ typedef struct {
     char *u_let;
     char *ints;
     char *Pass;
+    int len;
+    char *file;
     bool failed;
     char tmp_c;
     char *test_symb;
@@ -40,7 +38,7 @@ typedef struct {
 
 
 void k_parse(char *msg, kavpass *kav) {
-    char *token = strtok(msg, " "), *file;
+    char *token = strtok(msg, " ");
     if (strncmp(token,"set", 3) == 0) {
         token = strtok(NULL, " ");
         if (token == NULL) {
@@ -276,16 +274,15 @@ void write_file(char *str, char *path) {
 }
 
 int main(int argc, char **argv) {
-    int len, c, option_index = 0;
+    int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
-    char *file;
     while((c = getopt_long(argc, argv, "F:hievo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
                 unsafe = true;
                 commence = true;
                 made_pass = true;
-                len = atoi(optarg);
+                p->len = atoi(optarg);
                 break;
             case 'h':
                 usage(); 
@@ -300,12 +297,12 @@ int main(int argc, char **argv) {
                 verbose = true;
                 break;
             case 'o':
-                file = optarg;
+                p->file = optarg;
                 tmp = true;
                 break;
             case 'l':
-                len = atoi(optarg);
-                if (len > 2096) {
+                p->len = atoi(optarg);
+                if (p->len > 2096) {
                     fprintf(stderr, "Length cannot be longer than 2096.\n");
                     exit(1);
                 }
@@ -326,7 +323,7 @@ int main(int argc, char **argv) {
     if (!unsafe) {
         if (commence) {
             init(p,BUF_SIZE);
-            safe_set_pass(len);
+            safe_set_pass(p->len);
             if (verbose) {
                 printf("Password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
             }
@@ -337,9 +334,9 @@ int main(int argc, char **argv) {
         if (tmp) {
             init(p,BUF_SIZE);
             if (made_pass) {
-                write_file(p->Pass, file);
+                write_file(p->Pass, p->file);
                 if (verbose) {
-                    printf("Wrote password to file: %s\n",file);
+                    printf("Wrote password to file: %s\n",p->file);
                 }
             }
             else {
@@ -349,7 +346,7 @@ int main(int argc, char **argv) {
     } else {
         if (commence) {
             init(p,BUF_SIZE);
-            unsafe_set_pass(len);
+            unsafe_set_pass(p->len);
             if (verbose) {
                 printf("Unsafe password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
             }
@@ -360,9 +357,9 @@ int main(int argc, char **argv) {
         if (tmp) {
             init(p,BUF_SIZE);
             if (made_pass) {
-                write_file(p->Pass, file);
+                write_file(p->Pass, p->file);
                 if (verbose) {
-                    printf("Wrote unsafe password to file: %s\n",file);
+                    printf("Wrote unsafe password to file: %s\n",p->file);
                 }
             }
             else {
