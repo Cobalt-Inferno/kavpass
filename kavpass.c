@@ -88,6 +88,9 @@ void k_parse(char *msg, kavpass *kav) {
             }
         }
     }
+    else if (strncmp(token, "help", 4) == 0) {
+        usage();
+    }
     else if (strncmp(token, "generate", 8) == 0) {
         init(p,BUF_SIZE);
         safe_set_pass(kav->len);
@@ -208,13 +211,13 @@ void unsafe_return_ran(int line) {
 void usage() {
     printf("Program: Kavpass\n");
     printf("Usage: kavpass -[hloveF]\n");
-    printf("\t-h\t--help\t|\tDisplays the help message.\n");
-    printf("\t-l\t--length NUM\t|\tSpecifies the length.\n");
-    printf("\t-o\t--output\t|\tFile to output to.\n");
-    printf("\t-v\t--verbose\t|\tVerbose output.\n"); 
-    printf("\t-e\t--extra-unicode\t|\tAdds extra unicode char support.\n");
+    printf("\t-h\t--help\t\t\t|\tDisplays the help message.\n");
+    printf("\t-l\t--length NUM\t\t|\tSpecifies the length.\n");
+    printf("\t-o\t--output\t\t|\tFile to output to.\n");
+    printf("\t-v\t--verbose\t\t|\tVerbose output.\n"); 
+    printf("\t-e\t--extra-unicode\t\t|\tAdds extra unicode char support.\n");
     printf("\t-F\t--force-unsafe-rng NUM\t|\tReplaces --length and forces the use of an unsafe RNG.\n");
-    printf("\t-i\t--interactive\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
+    printf("\t-i\t--interactive\t\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 void safe_set_pass(size_t len) {
     LOOP:
