@@ -213,6 +213,7 @@ void usage() {
     printf("\t-i\t--interactive\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 void safe_set_pass(size_t len) {
+    srand(time(NULL));
     LOOP:
     for(size_t i = 0; i < len; i++) {
         if (p->test_symb_b) {
@@ -230,6 +231,7 @@ void safe_set_pass(size_t len) {
     }
 }
 void unsafe_set_pass(size_t len) {
+    srand(time(NULL));
     LOOP:
     for(size_t i = 0; i < len; i++) {
         if (p->test_symb_b) {
