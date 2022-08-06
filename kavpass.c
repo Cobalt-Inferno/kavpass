@@ -8,18 +8,6 @@
 
 // Kavpassctl stuff
 
-void chop(char *msg) {
-    char *tmp;
-    int i = 0;
-    while(++msg[i]) {
-        if (msg[i] != '\n' || msg[i] != '\0') {
-            tmp[i] = msg[i];
-        }
-        else {
-            tmp = msg;
-        }
-    }
-}
 
 
 typedef struct {
@@ -28,29 +16,29 @@ typedef struct {
     char *input;
 } kavpass;
 
-void k_write(char *msg, kavpass *kav, char *module) {
-    if (strcmp(module, "input") == 0) {
-        kav->input = msg;
-    } else if (strncmp(module, "prompt", 6) == 0) {
-        kav->prompt = msg -1;
-    }
-}
-
 void k_parse(char *msg, kavpass *kav) {
     char *token = strtok(msg, " ");
     if (strncmp(token,"set", 3) == 0) {
         while(token != NULL) {
             token = strtok(NULL, " ");
             if (strncmp(token, "prompt", 6) == 0) {
+                char buff[strlen(msg)];
                 token = strtok(NULL, " ");
-                puts(token);
-                k_write(token, kav, "prompt");
+                int len = strlen(token);
+                if (token[len - 1] == '\n') {
+                    token[len - 1] = '\0';
+                }
+                strcat(token, " ");
+                kav->prompt = token;
                 break;
             }
         }
     }
     else if (strncmp(token,"PUT", 3) == 0) {
         printf("Prompt :: %s | Input :: %s",kav->prompt,kav->input);
+    }
+    else if (strncmp(token, "exit", 4) == 0) {
+        return;
     }
     else {
         printf("Command not recognized!\n");
@@ -70,7 +58,7 @@ void k_ctl(kavpass *kav) { /* This is broken currently, do not use */
     while((strncmp(kav->input, "exit",4))) {
         printf("%s",kav->prompt);
         fgets(buff, 256, stdin);
-        k_write(buff,kav,"input");
+        kav->input = buff;
         k_parse(kav->input, kav);
     }
 }
