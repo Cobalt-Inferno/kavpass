@@ -6,6 +6,57 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// Kavpassctl stuff
+
+typedef struct {
+    char *prompt;
+    int len;
+    char *input;
+} kavpass;
+
+void k_write(char *msg, kavpass *kav, char *module) {
+    if (strcmp(module, "input") == 0) {
+        kav->input = msg;
+    } else if (strncmp(module, "prompt", 6) == 0) {
+        kav->prompt = msg -1;
+    }
+}
+
+void k_parse(char *msg, kavpass *kav) {
+    char *token = strtok(msg, " ");
+    if (strncmp(token,"set", 3) == 0) {
+        while(token != NULL) {
+            token = strtok(NULL, " ");
+            if (strncmp(token, "prompt", 6) == 0) {
+                token = strtok(NULL, " ");
+                puts(token);
+                k_write(token, kav, "prompt");
+                break;
+            }
+        }
+    }
+    if (strncmp(token,"PUT", 3) == 0) {
+        printf("Prompt :: %s | Input :: %s",kav->prompt,kav->input);
+    }
+    return;
+}
+void k_init(kavpass *kav) {
+    kav->prompt = "> ";
+    kav->input = ";";
+}
+
+
+void k_ctl(kavpass *kav) { /* This is broken currently, do not use */
+    
+    char buff[256];
+    k_init(kav);
+    while((strncmp(kav->input, "exit",4))) {
+        printf("%s",kav->prompt);
+        fgets(buff, 256, stdin);
+        k_write(buff,kav,"input");
+        k_parse(kav->input, kav);
+    }
+}
 #define ARR_S(arr) (sizeof(arr) / sizeof((arr)[0])) 
 int pull_rand() {
     FILE * file = fopen("/dev/random", "r");            
@@ -44,13 +95,11 @@ void init(Password *pass, size_t BUFFER) {
     pass->u_let = "QWERTYUIOPASDFGHJKLZXCVBNM";
     pass->ints = "1234567890";
     pass->test_symb = "™€‰—®©☺⚛";
-    printf("%d\n",strlen(pass->test_symb));
     pass->Pass = malloc(BUFFER * sizeof(char));
 }
 
 Password pass, *p = &pass;
 void safe_return_ran(int line) {
-    line = 5;
     if (line >=6) {
         p->failed = true;
     }else {
@@ -76,10 +125,10 @@ void safe_return_ran(int line) {
 }
 
 void unsafe_return_ran(int line) {
-    srand(time(NULL));
     if (line >=6) {
         p->failed = true;
     }else {
+        srand(time(NULL));
         switch(line) {
             case 1:
                 p->tmp_c = p->symb[rand() % strlen(p->symb)];
@@ -105,11 +154,13 @@ void unsafe_return_ran(int line) {
 
 void usage() {
     printf("Program: Kavpass\n");
-    printf("Usage:\n");
-    printf("\t-l\t--length\t|\tSpecifies the length.\n");
+    printf("Usage: kavpass -[hloveF]\n");
+    printf("\t-h\t--help\t|\tDisplays the help message.\n");
+    printf("\t-l\t--length NUM\t|\tSpecifies the length.\n");
     printf("\t-o\t--output\t|\tFile to output to.\n");
     printf("\t-v\t--verbose\t|\tVerbose output.\n"); 
     printf("\t-e\t--extra-unicode\t|\tAdds extra unicode char support.\n");
+    printf("\t-F\t--force-unsafe-rng NUM\t|\tReplaces --length and forces the use of an unsafe RNG.\n");
 }
 void safe_set_pass(size_t len) {
     LOOP:
@@ -128,13 +179,33 @@ void safe_set_pass(size_t len) {
         goto LOOP;
     }
 }
+void unsafe_set_pass(size_t len) {
+    LOOP:
+    for(size_t i = 0; i < len; i++) {
+        if (p->test_symb_b) {
+            unsafe_return_ran(rand() % 5 + 1);
+        } else {
+            unsafe_return_ran(rand() % 4 + 1);
+        }
+        p->Pass[i] = p->tmp_c;
+        if(p->failed) {
+            return;
+        }
+    }
+    if (strlen(p->Pass) != len) {
+        goto LOOP;
+    }
+}
+
+
 
 struct option long_options[] = {
-    { "length",     required_argument,  0,      'l' },
-    { "help",       no_argument,        0,      'h' },
-    { "output",     required_argument,  0,      'o' },
-    { "verbose",    no_argument,        0,      'v' },
-    { "extra-unicode",  no_argument,    0,      'e' },
+    { "length",             required_argument,  0,      'l' },
+    { "help",               no_argument,        0,      'h' },
+    { "output",             required_argument,  0,      'o' },
+    { "force-unsafe-rng",   required_argument,  0,      'F' },
+    { "verbose",            no_argument,        0,      'v' },
+    { "extra-unicode",      no_argument,        0,      'e' },
     { 0, 0, 0, 0 }
 };
 
@@ -148,10 +219,16 @@ void write_file(char *str, char *path) {
 
 int main(int argc, char **argv) {
     int len, c, option_index = 0;
-    bool verbose = false, made_pass = false, tmp = false, commence = false;
+    bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
     char *file;
-    while((c = getopt_long(argc, argv, "hevo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "F:hevo:l:", long_options, &option_index)) != -1) {
         switch(c) {
+            case 'F':
+                unsafe = true;
+                commence = true;
+                made_pass = true;
+                len = atoi(optarg);
+                break;
             case 'h':
                 usage(); 
                 break;
@@ -181,29 +258,56 @@ int main(int argc, char **argv) {
                 break;
         }
     }
-    if (commence) {
-        init(p,BUF_SIZE);
-        safe_set_pass(len);
-        if (verbose) {
-            printf("Password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
-        }
-        else {
-            printf("%s\n",p->Pass);
-        }
-    }
-    if (tmp) {
-        init(p,BUF_SIZE);
-        if (made_pass) {
-            write_file(p->Pass, file);
+    if (!unsafe) {
+        if (commence) {
+            init(p,BUF_SIZE);
+            safe_set_pass(len);
             if (verbose) {
-                printf("Wrote password to file: %s\n",file);
+                printf("Password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
+            }
+            else {
+                printf("%s\n",p->Pass);
             }
         }
-        else {
-            fprintf(stderr, "Password not generated. Run $ kavpass -h\n");
+        if (tmp) {
+            init(p,BUF_SIZE);
+            if (made_pass) {
+                write_file(p->Pass, file);
+                if (verbose) {
+                    printf("Wrote password to file: %s\n",file);
+                }
+            }
+            else {
+                fprintf(stderr, "Password not generated. Run $ kavpass -h\n");
+            }
+        }
+    } else {
+        if (commence) {
+            init(p,BUF_SIZE);
+            unsafe_set_pass(len);
+            if (verbose) {
+                printf("Unsafe password: %s\nWith Length: %zu\n",p->Pass, strlen(p->Pass));
+            }
+            else {
+                printf("%s\n",p->Pass);
+            }
+        }
+        if (tmp) {
+            init(p,BUF_SIZE);
+            if (made_pass) {
+                write_file(p->Pass, file);
+                if (verbose) {
+                    printf("Wrote unsafe password to file: %s\n",file);
+                }
+            }
+            else {
+                fprintf(stderr, "Password not generated. Run $ kavpass -h\n");
+            }
         }
     }
     if (p->Pass) {
         free(p->Pass);
     }
+    kavpass *pass = malloc(100 * sizeof(kavpass));
+    k_ctl(pass);
 }
