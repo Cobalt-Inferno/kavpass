@@ -35,17 +35,16 @@ typedef struct {
     char *prompt;
     int len;
     char *input;
+    bool verbose;
 } kavpass;
 
 
 void k_parse(char *msg, kavpass *kav) {
     char *token = strtok(msg, " "), *file;
-    bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
     if (strncmp(token,"set", 3) == 0) {
         token = strtok(NULL, " ");
         if (token == NULL) {
             fprintf(stderr, "No prompt -set- value provided.\n");
-            return;
         }
         if (token != NULL) {
             if (strncmp(token, "prompt", 6) == 0) {
@@ -60,19 +59,40 @@ void k_parse(char *msg, kavpass *kav) {
                 strcat(token, " ");
                 kav->prompt = token;
             }
-            if (strncmp(token, "length", 6) == 0) {
+            else if (strncmp(token, "length", 6) == 0) {
                 token = strtok(NULL, " ");
+                if (token == NULL) {
+                    fprintf(stderr, "No length specified.\n");
+                }
                 kav->len = atoi(token);
             }
+            else if (strncmp(token, "verbose", 7) == 0) {
+                init(p,BUF_SIZE);
+                token = strtok(NULL, " ");
+                if (token == NULL) {
+                    fprintf(stderr, "No setting specified.\n");
+                }
+                if (strncmp(token, "true", 4) == 0) {
+                    kav->verbose = true;
+                }
+                else if (strncmp(token, "false", 5) == 0) {
+                    kav->verbose = false;
+                }    
+            }
+            else {
+                fprintf(stderr, "Setting not recognized.\n");
+            }
         }
-    }
-    else if (strncmp(token,"PUT", 3) == 0) {
-        printf("Prompt :: %s| Input :: %s\n",kav->prompt,kav->input);
     }
     else if (strncmp(token, "generate", 8) == 0) {
         init(p,BUF_SIZE);
         safe_set_pass(kav->len);
-        printf("%s\n",p->Pass);
+        if (kav->verbose) {
+            printf("Password: %s\nWith length: %d\n",p->Pass, kav->len);
+        }
+        else {
+            printf("%s\n",p->Pass);
+        }
         free(p->Pass);
     }
     else if (strncmp(token, "exit", 4) == 0) {
