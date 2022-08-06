@@ -19,11 +19,18 @@ typedef struct {
 void k_parse(char *msg, kavpass *kav) {
     char *token = strtok(msg, " ");
     if (strncmp(token,"set", 3) == 0) {
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            fprintf(stderr, "No prompt -set- value provided.\n");
+            return;
+        }
         while(token != NULL) {
-            token = strtok(NULL, " ");
             if (strncmp(token, "prompt", 6) == 0) {
-                char buff[strlen(msg)];
                 token = strtok(NULL, " ");
+                if (token == NULL) {
+                    fprintf(stderr, "No prompt provided.\n");
+                    break;
+                }
                 int len = strlen(token);
                 if (token[len - 1] == '\n') {
                     token[len - 1] = '\0';
@@ -35,7 +42,7 @@ void k_parse(char *msg, kavpass *kav) {
         }
     }
     else if (strncmp(token,"PUT", 3) == 0) {
-        printf("Prompt :: %s | Input :: %s",kav->prompt,kav->input);
+        printf("Prompt :: %s| Input :: %s\n",kav->prompt,kav->input);
     }
     else if (strncmp(token, "exit", 4) == 0) {
         return;
