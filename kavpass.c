@@ -64,6 +64,10 @@ void k_parse(char *msg, kavpass *kav) {
                 if (token == NULL) {
                     fprintf(stderr, "No length specified.\n");
                 }
+                if (atoi(token) > 2096) {
+                    fprintf(stderr, "Length cannot be over 2096.\n");
+                    return;
+                }
                 kav->len = atoi(token);
             }
             else if (strncmp(token, "verbose", 7) == 0) {
@@ -298,6 +302,10 @@ int main(int argc, char **argv) {
                 break;
             case 'l':
                 len = atoi(optarg);
+                if (len > 2096) {
+                    fprintf(stderr, "Length cannot be longer than 2096.\n");
+                    exit(1);
+                }
                 commence = true;
                 made_pass = true;
                 break;
