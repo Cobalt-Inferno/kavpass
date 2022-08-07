@@ -59,6 +59,25 @@ void k_parse(char *msg, kavpass *kav) {
                 strcat(token, " ");
                 kav->prompt = token;
             }
+            else if (strncmp(token, "extra-unicode", 7) == 0) {
+                token = strtok(NULL, " ");
+                if (token[strlen(token) - 1] == '\n') {
+                    token[strlen(token) - 1] = '\0';
+                }
+                if (token == NULL) {
+                    fprintf(stderr, "No setting specified.\n");
+                    return;
+                }
+                if (strncmp(token, "true", 4) == 0) {
+                    p->test_symb_b= true;
+                }
+                else if (strncmp(token, "false", 5) == 0) {
+                    p->test_symb_b = false;
+                }    
+                else {
+                    fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
+                }
+            }
             else if (strncmp(token, "unsafe", 7) == 0) {
                 token = strtok(NULL, " ");
                 if (token[strlen(token) - 1] == '\n') {
