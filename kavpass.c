@@ -5,8 +5,9 @@
 #include <time.h>
 #include <stdbool.h>
 
+const size_t BUF_SIZE = 2096;
 
-size_t BUF_SIZE = 2096; 
+
 typedef struct {
     char *symb;
     char *l_let;
@@ -150,7 +151,7 @@ void init(Password *pass, size_t BUFFER) {
     pass->u_let = "QWERTYUIOPASDFGHJKLZXCVBNM";
     pass->ints = "1234567890";
     pass->test_symb = "™€‰—®©☺⚛";
-    pass->Pass = malloc(BUFFER * sizeof(char));
+    pass->Pass = (char *) malloc(BUFFER * sizeof(char));
 }
 
 void safe_return_ran(int line) {
