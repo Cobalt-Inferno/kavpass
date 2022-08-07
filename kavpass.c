@@ -4,12 +4,8 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
-
 const size_t BUF_SIZE = 2096;
-
-
 const char *version = "v1.0.0";
-
 typedef struct {
     char *symb;
     char *l_let;
@@ -37,9 +33,8 @@ typedef struct {
     int len;
     char *input;
     bool verbose;
+    bool unsafe;
 } kavpass;
-
-
 void k_parse(char *msg, kavpass *kav) {
     char *token = strtok(msg, " ");
     if (strncmp(token,"set", 3) == 0) {
@@ -60,6 +55,25 @@ void k_parse(char *msg, kavpass *kav) {
                 }
                 strcat(token, " ");
                 kav->prompt = token;
+            }
+            else if (strncmp(token, "unsafe", 7) == 0) {
+                token = strtok(NULL, " ");
+                if (token[strlen(token) - 1] == '\n') {
+                    token[strlen(token) - 1] = '\0';
+                }
+                if (token == NULL) {
+                    fprintf(stderr, "No setting specified.\n");
+                    return;
+                }
+                if (strncmp(token, "true", 4) == 0) {
+                    kav->unsafe = true;
+                }
+                else if (strncmp(token, "false", 5) == 0) {
+                    kav->unsafe = false;
+                }    
+                else {
+                    fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
+                }
             }
             else if (strncmp(token, "length", 6) == 0) {
                 token = strtok(NULL, " ");
@@ -100,7 +114,11 @@ void k_parse(char *msg, kavpass *kav) {
         usage();
     }
     else if (strncmp(token, "generate", 8) == 0) {
-        safe_set_pass(kav->len);
+        if (!kav->unsafe) {
+            safe_set_pass(kav->len);
+        } else {
+            unsafe_set_pass(kav->len);
+        }
         if (kav->verbose) {
             printf("Password: %s\nWith length: %d\n",p->Pass, kav->len);
         }
@@ -120,10 +138,7 @@ void k_init(kavpass *kav) {
     kav->prompt = "> ";
     kav->input = ";";
 }
-
-
 void k_ctl(kavpass *kav) { 
-    
     char buff[256];
     k_init(kav);
     while((strncmp(kav->input, "exit",4))) {
@@ -150,8 +165,6 @@ int pull_rand() {
     fclose(file);
     return temp;
 }
-    
-
 void init(Password *pass, size_t BUFFER) {
     pass->symb = "!@#$%^&*()-=+_][{}";
     pass->l_let = "qwertyuiopasdfghjklzxcvbnm";
@@ -160,7 +173,6 @@ void init(Password *pass, size_t BUFFER) {
     pass->test_symb = "™€‰—®©☺⚛";
     pass->Pass = (char *) malloc(BUFFER * sizeof(char));
 }
-
 void safe_return_ran(int line) {
     if (line >=6) {
         p->failed = true;
@@ -185,7 +197,6 @@ void safe_return_ran(int line) {
         }
     }
 }
-
 void unsafe_return_ran(int line) {
     if (line >=6) {
         p->failed = true;
@@ -210,9 +221,6 @@ void unsafe_return_ran(int line) {
         }
     }
 }
-
-
-
 void usage() {
     printf("Program: kavpass | version: %s\n", version);
     printf("Usage: kavpass -[hloveF]\n");
@@ -259,9 +267,6 @@ void unsafe_set_pass(size_t len) {
         goto LOOP;
     }
 }
-
-
-
 struct option long_options[] = {
     { "length",             required_argument,  0,      'l' },
     { "help",               no_argument,        0,      'h' },
@@ -272,15 +277,11 @@ struct option long_options[] = {
     { "interactive",        no_argument,        0,      'i' },
     { 0, 0, 0, 0 }
 };
-
-
-
 void write_file(char *str, char *path) {
     FILE *ptr = fopen(path, "w");
     fputs(str, ptr);
     fclose(ptr);
 }
-
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
