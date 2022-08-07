@@ -482,13 +482,13 @@ int main(int argc, char **argv) {
                 tmp = true;
                 break;
             case 'l':
-                p->len = atoi(optarg);
                 if (p->len > 2096) {
                     fprintf(stderr, "Length cannot be longer than 2096.\n");
                     exit(1);
                 }
                 commence = true;
                 made_pass = true;
+                p->len = atoi(optarg);
                 break;
             case ':':
                 usage();
@@ -513,7 +513,6 @@ int main(int argc, char **argv) {
             }
         }
         if (tmp) {
-            init(p,BUF_SIZE);
             if (made_pass) {
                 write_file(p->Pass, p->file);
                 if (verbose) {
@@ -536,7 +535,6 @@ int main(int argc, char **argv) {
             }
         }
         if (tmp) {
-            init(p,BUF_SIZE);
             if (made_pass) {
                 write_file(p->Pass, p->file);
                 if (verbose) {
