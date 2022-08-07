@@ -37,7 +37,10 @@ typedef struct {
 } kavpass;
 void k_parse(char *msg, kavpass *kav) {
     char *token = strtok(msg, " ");
-    if (strncmp(token,"set", 3) == 0) {
+    if (strncmp(token, "\n", 1) == 0 || strncmp(token, "\0", 1) == 0) {
+        return;
+    }
+    else if (strncmp(token,"set", 3) == 0) {
         token = strtok(NULL, " ");
         if (token == NULL) {
             fprintf(stderr, "No prompt -set- value provided.\n");
