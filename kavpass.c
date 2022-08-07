@@ -19,6 +19,19 @@ typedef struct {
     char *test_symb;
     bool test_symb_b;
 } Password;
+
+void i_help() {
+    printf("Available commands in kavpass interactive mode:\n");
+    printf("\tset\t\t|\tThis command can take any of the following options:\n");
+    printf("\tverbose\t\t|\t[true/false] sets the status of verbose output.\n");
+    printf("\tlength\t\t|\t[num] sets the length for generated passwords.\n");
+    printf("\toutput\t\t|\t[file] sets the file to output to.\n");
+    printf("\tunsafe\t\t|\t[true/false] sets the status for using an unsafe RNG.\n");
+    printf("\textra-unicode\t|\t[true/false] sets the status for using extra unicode chars.\n");
+    printf("\tprompt\t\t|\t[prompt] sets the interactive prompt.\n");
+    printf("\tgenerate\t|\tgenerates the prompt with select options.\n");
+}
+
 int pull_rand();
 void init(Password *pass, size_t BUFFER);
 void safe_return_ran(int line);
@@ -146,7 +159,7 @@ void k_parse(char *msg, kavpass *kav) {
         }
     }
     else if (strncmp(token, "help", 4) == 0) {
-        usage();
+        i_help();
     }
     else if (strncmp(token, "generate", 8) == 0) {
         if (!kav->unsafe) {
@@ -349,6 +362,10 @@ int main(int argc, char **argv) {
                 unsafe = true;
                 commence = true;
                 made_pass = true;
+                if (atoi(optarg) > 2096) {
+                    fprintf(stderr, "Length canot be longer than 2096.\n");
+                    exit(1);
+                }
                 p->len = atoi(optarg);
                 break;
             case 'h':
