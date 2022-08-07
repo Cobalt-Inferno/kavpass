@@ -117,7 +117,7 @@ void k_init(kavpass *kav) {
 }
 
 
-void k_ctl(kavpass *kav) { /* This is broken currently, do not use */
+void k_ctl(kavpass *kav) { 
     
     char buff[256];
     k_init(kav);
@@ -293,6 +293,7 @@ int main(int argc, char **argv) {
             case 'i':
                 kavpass *kav = malloc(256 * sizeof(kavpass));
                 k_ctl(kav);
+                free(kav);
             case 'e':
                 p->test_symb_b = true;
                 break;
