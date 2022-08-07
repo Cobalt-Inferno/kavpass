@@ -182,7 +182,6 @@ void unsafe_return_ran(int line) {
     if (line >=6) {
         p->failed = true;
     }else {
-        srand(time(NULL));
         switch(line) {
             case 1:
                 p->tmp_c = p->symb[rand() % strlen(p->symb)];
@@ -236,11 +235,12 @@ void safe_set_pass(size_t len) {
 }
 void unsafe_set_pass(size_t len) {
     LOOP:
+    srand(time(NULL));
     for(size_t i = 0; i < len; i++) {
         if (p->test_symb_b) {
-            unsafe_return_ran(pull_rand() % 5 + 1);
+            unsafe_return_ran(rand() % 5 + 1);
         } else {
-            unsafe_return_ran(pull_rand() % 4 + 1);
+            unsafe_return_ran(rand() % 4 + 1);
         }
         p->Pass[i] = p->tmp_c;
         if(p->failed) {
