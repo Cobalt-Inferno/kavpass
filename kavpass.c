@@ -4,6 +4,49 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+
+#define RESET  "\x1B[0m"
+#define RED  "\x1B[31m"
+#define GREEN  "\x1B[32m"
+#define YELLOW  "\x1B[33m"
+#define BLUE  "\x1B[34m"
+#define MAGENTA  "\x1B[35m"
+#define CYAN  "\x1B[36m"
+#define WHITE  "\x1B[37m"
+
+void switch_color(int col) {
+    col = col >= 0 ? col : 0;
+    switch(col) {
+        case 0:
+            printf("%s",RESET);
+            break;
+        case 1:
+            printf("%s",RED);
+            break;
+        case 2:
+            printf("%s",GREEN);
+            break;
+        case 3:
+            printf("%s",YELLOW);
+            break;
+        case 4:
+            printf("%s",BLUE);
+            break;
+        case 5:
+            printf("%s",MAGENTA);
+            break;
+        case 6:
+            printf("%s",CYAN);
+            break;
+        case 7:
+            printf("%s",WHITE);
+            break;
+        default:
+            return;
+    }
+}
+
+
 const size_t BUF_SIZE = 2096;
 const char *version = "v1.0.0";
 typedef struct {
