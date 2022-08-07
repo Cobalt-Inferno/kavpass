@@ -420,6 +420,7 @@ struct option long_options[] = {
     { "verbose",            no_argument,        0,      'v' },
     { "extra-unicode",      no_argument,        0,      'e' },
     { "interactive",        no_argument,        0,      'i' },
+    { "color",              required_argument,  0,      'c' },
     { 0, 0, 0, 0 }
 };
 void write_file(char *str, char *path) {
@@ -430,7 +431,7 @@ void write_file(char *str, char *path) {
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
-    while((c = getopt_long(argc, argv, "F:hievo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "F:hc:ievo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
                 unsafe = true;
@@ -444,6 +445,26 @@ int main(int argc, char **argv) {
                 break;
             case 'h':
                 usage(); 
+                break;
+            case 'c':
+                char *token = optarg;
+                if (strncmp(token, "red", 3) == 0) {
+                    switch_color(1);
+                } else if (strncmp(token, "green", 5) == 0) {
+                    switch_color(2);
+                } else if (strncmp(token, "yellow", 6) == 0) {
+                    switch_color(3);
+                } else if (strncmp(token, "blue", 4) == 0) {
+                    switch_color(4);
+                } else if (strncmp(token, "magenta", 7) == 0) {
+                    switch_color(5);
+                } else if (strncmp(token, "cyan", 4) == 0) {
+                    switch_color(6);
+                } else if (strncmp(token, "white", 5) == 0) {
+                    switch_color(7);
+                } else {
+                    fprintf(stderr, "Color: \"%s\" is not recognized.\n", token);
+                }
                 break;
             case 'i':
                 kavpass *kav = malloc(256 * sizeof(kavpass));
