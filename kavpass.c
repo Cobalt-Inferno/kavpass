@@ -52,6 +52,7 @@ void k_parse(char *msg, kavpass *kav) {
                 token = strtok(NULL, " ");
                 if (token == NULL) {
                     fprintf(stderr, "No prompt provided.\n");
+                    return;
                 }
                 int len = strlen(token);
                 if (token[len - 1] == '\n') {
@@ -72,15 +73,13 @@ void k_parse(char *msg, kavpass *kav) {
                 kav->len = atoi(token);
             }
             else if (strncmp(token, "verbose", 7) == 0) {
-                if (strtok(NULL, " ") == NULL) {
+                token = strtok(NULL, " ");
+                if (token[strlen(token) - 1] == '\n') {
+                    token[strlen(token) - 1] = '\0';
+                }
+                if (token == NULL) {
                     fprintf(stderr, "No setting specified.\n");
                     return;
-                }
-                else {
-                    token = strtok(NULL, " ");
-                }
-                if (!(strncmp(token, "true", 4) == 0) && !(strncmp(token, "false", 5) == 0)) {
-                    fprintf(stderr, "Incorrect option.\n");
                 }
                 if (strncmp(token, "true", 4) == 0) {
                     kav->verbose = true;
@@ -88,6 +87,9 @@ void k_parse(char *msg, kavpass *kav) {
                 else if (strncmp(token, "false", 5) == 0) {
                     kav->verbose = false;
                 }    
+                else {
+                    fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
+                }
             }
             else {
                 fprintf(stderr, "Setting not recognized.\n");
