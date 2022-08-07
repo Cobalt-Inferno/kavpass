@@ -34,8 +34,10 @@ typedef struct {
     char *input;
     bool verbose;
     bool unsafe;
+    bool file;
 } kavpass;
 void k_parse(char *msg, kavpass *kav) {
+    char *file = (char*) malloc(256*(sizeof(char*)));
     char *token = strtok(msg, " ");
     if (strncmp(token, "\n", 1) == 0 || strncmp(token, "\0", 1) == 0) {
         return;
@@ -108,6 +110,17 @@ void k_parse(char *msg, kavpass *kav) {
                 }
                 kav->len = atoi(token);
             }
+            else if (strncmp(token, "output", 6) == 0) {
+                token = strtok(NULL, " ");
+                if (token == NULL) {
+                    fprintf(stderr, "No output file specified.\n");
+                }
+                if (token[strlen(token) - 1] == '\n') {
+                    token[strlen(token) - 1] = '\0';
+                }
+                file = token;
+                kav->file = true;
+            }
             else if (strncmp(token, "verbose", 7) == 0) {
                 token = strtok(NULL, " ");
                 if (token[strlen(token) - 1] == '\n') {
@@ -138,14 +151,32 @@ void k_parse(char *msg, kavpass *kav) {
     else if (strncmp(token, "generate", 8) == 0) {
         if (!kav->unsafe) {
             safe_set_pass(kav->len);
+            if (kav->verbose) {
+                if (kav->file) {
+                    write_file(p->Pass, file);
+                    printf("Password: %s\nWith length: %d written to file: %s\n",p->Pass, kav->len, file);
+                }
+                else {
+                    printf("Password: %s\nWith length: %d\n",p->Pass, kav->len);
+                }
+            }
+            else {
+                printf("%s\n",p->Pass);
+            }
         } else {
             unsafe_set_pass(kav->len);
-        }
-        if (kav->verbose) {
-            printf("Password: %s\nWith length: %d\n",p->Pass, kav->len);
-        }
-        else {
-            printf("%s\n",p->Pass);
+            if (kav->verbose) {
+                if (kav->file) {
+                    write_file(p->Pass, file);
+                    printf("Unsafe password: %s\nWith lengh: %d written to file: %s\n",p->Pass, kav->len, file); 
+                }
+                else {
+                    printf("Unsafe password: %s\nWith lengh: %d\n",p->Pass, kav->len);
+                }
+            }
+            else {
+                printf("%s\n",p->Pass);
+            }
         }
     }
     else if (strncmp(token, "exit", 4) == 0) {
@@ -159,6 +190,7 @@ void k_parse(char *msg, kavpass *kav) {
         printf("Command not recognized!\n");
     }
     return;
+    free(file);
 }
 void k_init(kavpass *kav) {
     kav->prompt = "> ";
