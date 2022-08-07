@@ -72,7 +72,6 @@ void k_parse(char *msg, kavpass *kav) {
                 kav->len = atoi(token);
             }
             else if (strncmp(token, "verbose", 7) == 0) {
-                init(p,BUF_SIZE);
                 token = strtok(NULL, " ");
                 if (token == NULL) {
                     fprintf(stderr, "No setting specified.\n");
@@ -93,7 +92,6 @@ void k_parse(char *msg, kavpass *kav) {
         usage();
     }
     else if (strncmp(token, "generate", 8) == 0) {
-        init(p,BUF_SIZE);
         safe_set_pass(kav->len);
         if (kav->verbose) {
             printf("Password: %s\nWith length: %d\n",p->Pass, kav->len);
@@ -101,7 +99,6 @@ void k_parse(char *msg, kavpass *kav) {
         else {
             printf("%s\n",p->Pass);
         }
-        free(p->Pass);
     }
     else if (strncmp(token, "exit", 4) == 0) {
         return;
@@ -292,6 +289,7 @@ int main(int argc, char **argv) {
                 break;
             case 'i':
                 kavpass *kav = malloc(256 * sizeof(kavpass));
+                init(p,BUF_SIZE);
                 k_ctl(kav);
                 free(kav);
             case 'e':
