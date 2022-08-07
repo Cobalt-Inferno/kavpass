@@ -22,13 +22,13 @@ typedef struct {
 
 void i_help() {
     printf("Available commands in kavpass interactive mode:\n");
-    printf("\tset\t\t|\tThis command can take any of the following options:\n");
-    printf("\tverbose\t\t|\t[true/false] sets the status of verbose output.\n");
-    printf("\tlength\t\t|\t[num] sets the length for generated passwords.\n");
-    printf("\toutput\t\t|\t[file] sets the file to output to.\n");
-    printf("\tunsafe\t\t|\t[true/false] sets the status for using an unsafe RNG.\n");
-    printf("\textra-unicode\t|\t[true/false] sets the status for using extra unicode chars.\n");
-    printf("\tprompt\t\t|\t[prompt] sets the interactive prompt.\n");
+    printf("\tset\t|\tThis command can take any of the following options:\n");
+    printf("\t\t•\tverbose\t\t|\t[true/false] sets the status of verbose output.\n");
+    printf("\t\t•\tlength\t\t|\t[num] sets the length for generated passwords.\n");
+    printf("\t\t•\toutput\t\t|\t[file] sets the file to output to.\n");
+    printf("\t\t•\tunsafe\t\t|\t[true/false] sets the status for using an unsafe RNG.\n");
+    printf("\t\t•\textra-unicode\t|\t[true/false] sets the status for using extra unicode chars.\n");
+    printf("\t\t•\tprompt\t\t|\t[prompt] sets the interactive prompt.\n");
     printf("\tgenerate\t|\tgenerates the prompt with select options.\n");
 }
 
