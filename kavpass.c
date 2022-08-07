@@ -151,6 +151,10 @@ void k_parse(char *msg, kavpass *kav) {
     else if (strncmp(token, "exit", 4) == 0) {
         return;
     }
+    else if (strncmp(token, "clear", 5) == 0) {
+        #define ESC    "\x1b"
+        printf(ESC"[2J"ESC"[?6h");
+    }
     else {
         printf("Command not recognized!\n");
     }
