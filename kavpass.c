@@ -8,6 +8,8 @@
 const size_t BUF_SIZE = 2096;
 
 
+const char *version = "v1.0.0";
+
 typedef struct {
     char *symb;
     char *l_let;
@@ -207,7 +209,7 @@ void unsafe_return_ran(int line) {
 
 
 void usage() {
-    printf("Program: Kavpass\n");
+    printf("Program: kavpass | version: %s\n", version);
     printf("Usage: kavpass -[hloveF]\n");
     printf("\t-h\t--help\t\t\t|\tDisplays the help message.\n");
     printf("\t-l\t--length NUM\t\t|\tSpecifies the length.\n");
