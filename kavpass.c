@@ -155,6 +155,35 @@ void k_parse(char *msg, kavpass *kav) {
                     fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
                 }
             }
+            else if (strncmp(token, "color", 5) == 0) {
+                token = strtok(NULL, " ");
+                if (token[strlen(token - 1)] == '\n') {
+                    token[strlen(token) - 1] = '\0';
+                }
+                if (token == NULL) {
+                    fprintf(stderr, "No color specified.\n");
+                    return;
+                }
+                if (strncmp(token, "reset", 5) == 0) {
+                    switch_color(0);
+                } else if (strncmp(token, "red", 3) == 0) {
+                    switch_color(1);
+                } else if (strncmp(token, "green", 5) == 0) {
+                    switch_color(2);
+                } else if (strncmp(token, "yellow", 6) == 0) {
+                    switch_color(3);
+                } else if (strncmp(token, "blue", 4) == 0) {
+                    switch_color(4);
+                } else if (strncmp(token, "magenta", 7) == 0) {
+                    switch_color(5);
+                } else if (strncmp(token, "cyan", 4) == 0) {
+                    switch_color(6);
+                } else if (strncmp(token, "white", 5) == 0) {
+                    switch_color(7);
+                } else {
+                    fprintf(stderr, "Color: \"%s\" is not recognized.\n",token);
+                }
+            }
             else if (strncmp(token, "length", 6) == 0) {
                 token = strtok(NULL, " ");
                 if (token == NULL) {
