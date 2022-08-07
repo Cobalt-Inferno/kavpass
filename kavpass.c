@@ -102,6 +102,7 @@ void k_parse(char *msg, kavpass *kav) {
         token = strtok(NULL, " ");
         if (token == NULL) {
             fprintf(stderr, "No prompt -set- value provided.\n");
+            return;
         }
         if (token != NULL) {
             if (strncmp(token, "prompt", 6) == 0) {
@@ -136,14 +137,14 @@ void k_parse(char *msg, kavpass *kav) {
                     fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
                 }
             }
-            else if (strncmp(token, "unsafe", 7) == 0) {
+            else if (strncmp(token, "unsafe", 6) == 0) {
                 token = strtok(NULL, " ");
-                if (token[strlen(token) - 1] == '\n') {
-                    token[strlen(token) - 1] = '\0';
-                }
                 if (token == NULL) {
                     fprintf(stderr, "No setting specified.\n");
                     return;
+                }
+                if (token[strlen(token) - 1] == '\n') {
+                    token[strlen(token) - 1] = '\0';
                 }
                 if (strncmp(token, "true", 4) == 0) {
                     kav->unsafe = true;
@@ -157,12 +158,12 @@ void k_parse(char *msg, kavpass *kav) {
             }
             else if (strncmp(token, "color", 5) == 0) {
                 token = strtok(NULL, " ");
-                if (token[strlen(token - 1)] == '\n') {
-                    token[strlen(token) - 1] = '\0';
-                }
                 if (token == NULL) {
                     fprintf(stderr, "No color specified.\n");
                     return;
+                }
+                if (token[strlen(token - 1)] == '\n') {
+                    token[strlen(token) - 1] = '\0';
                 }
                 if (strncmp(token, "reset", 5) == 0) {
                     switch_color(0);
@@ -188,6 +189,7 @@ void k_parse(char *msg, kavpass *kav) {
                 token = strtok(NULL, " ");
                 if (token == NULL) {
                     fprintf(stderr, "No length specified.\n");
+                    return;
                 }
                 if (atoi(token) > 2096) {
                     fprintf(stderr, "Length cannot be over 2096.\n");
@@ -208,12 +210,12 @@ void k_parse(char *msg, kavpass *kav) {
             }
             else if (strncmp(token, "verbose", 7) == 0) {
                 token = strtok(NULL, " ");
-                if (token[strlen(token) - 1] == '\n') {
-                    token[strlen(token) - 1] = '\0';
-                }
                 if (token == NULL) {
                     fprintf(stderr, "No setting specified.\n");
                     return;
+                }
+                if (token[strlen(token) - 1] == '\n') {
+                    token[strlen(token) - 1] = '\0';
                 }
                 if (strncmp(token, "true", 4) == 0) {
                     kav->verbose = true;
