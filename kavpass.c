@@ -162,7 +162,7 @@ void k_parse(char *msg, kavpass *kav) {
                     fprintf(stderr, "No color specified.\n");
                     return;
                 }
-                if (token[strlen(token - 1)] == '\n') {
+                if (token[strlen(token) - 1] == '\n') {
                     token[strlen(token) - 1] = '\0';
                 }
                 if (strncmp(token, "reset", 5) == 0) {
