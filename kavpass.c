@@ -72,9 +72,15 @@ void k_parse(char *msg, kavpass *kav) {
                 kav->len = atoi(token);
             }
             else if (strncmp(token, "verbose", 7) == 0) {
-                token = strtok(NULL, " ");
-                if (token == NULL) {
+                if (strtok(NULL, " ") == NULL) {
                     fprintf(stderr, "No setting specified.\n");
+                    return;
+                }
+                else {
+                    token = strtok(NULL, " ");
+                }
+                if (!(strncmp(token, "true", 4) == 0) && !(strncmp(token, "false", 5) == 0)) {
+                    fprintf(stderr, "Incorrect option.\n");
                 }
                 if (strncmp(token, "true", 4) == 0) {
                     kav->verbose = true;
