@@ -46,7 +46,7 @@ void switch_color(int col) {
     }
 }
 
-char *t_buff;
+
 const size_t BUF_SIZE = 2096;
 const char *version = "v1.0.0";
 typedef struct {
@@ -56,8 +56,10 @@ typedef struct {
     char *ints;
     char *Pass;
     int len;
+    bool prefix;
     char *file;
     bool failed;
+    char *pref;
     char tmp_c;
     char *test_symb;
     bool test_symb_b;
@@ -82,7 +84,7 @@ void unsafe_return_ran(int line);
 void usage();
 void safe_set_pass(size_t len);
 void unsafe_set_pass(size_t len);
-void write_file(char *str, char *path);
+void write_file(char *sr, char *path);
 Password pass, *p = &pass;
 typedef struct {
     char *prompt;
@@ -93,6 +95,7 @@ typedef struct {
     bool file;
 } kavpass;
 void k_parse(char *msg, kavpass *kav) {
+    char *file = (char*) malloc(256*(sizeof(char*)));
     char *token = strtok(msg, " ");
     if (strncmp(token, "\n", 1) == 0 || strncmp(token, "\0", 1) == 0) {
         return;
@@ -116,7 +119,6 @@ void k_parse(char *msg, kavpass *kav) {
                 }
                 strcat(token, " ");
                 kav->prompt = token;
-                return;
             }
             else if (strncmp(token, "extra-unicode", 13) == 0) {
                 token = strtok(NULL, " ");
@@ -136,7 +138,6 @@ void k_parse(char *msg, kavpass *kav) {
                 else {
                     fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
                 }
-                return;
             }
             else if (strncmp(token, "unsafe", 6) == 0) {
                 token = strtok(NULL, " ");
@@ -156,7 +157,6 @@ void k_parse(char *msg, kavpass *kav) {
                 else {
                     fprintf(stderr, "Option: \"%s\" is not valid.\n",token);
                 }
-                return;
             }
             else if (strncmp(token, "color", 5) == 0) {
                 token = strtok(NULL, " ");
@@ -186,7 +186,6 @@ void k_parse(char *msg, kavpass *kav) {
                 } else {
                     fprintf(stderr, "Color: \"%s\" is not recognized.\n",token);
                 }
-                return;
             }
             else if (strncmp(token, "length", 6) == 0) {
                 token = strtok(NULL, " ");
@@ -199,20 +198,17 @@ void k_parse(char *msg, kavpass *kav) {
                     return;
                 }
                 kav->len = atoi(token);
-                return;
             }
             else if (strncmp(token, "output", 6) == 0) {
                 token = strtok(NULL, " ");
                 if (token == NULL) {
                     fprintf(stderr, "No output file specified.\n");
-                    return;
                 }
                 if (token[strlen(token) - 1] == '\n') {
                     token[strlen(token) - 1] = '\0';
                 }
-                p->file = token;
+                file = token;
                 kav->file = true;
-                return;
             }
             else if (strncmp(token, "verbose", 7) == 0) {
                 token = strtok(NULL, " ");
@@ -236,20 +232,18 @@ void k_parse(char *msg, kavpass *kav) {
             else {
                 fprintf(stderr, "Setting not recognized.\n");
             }
-            return;
         }
     }
     else if (strncmp(token, "help", 4) == 0) {
         i_help();
-        return;
     }
     else if (strncmp(token, "generate", 8) == 0) {
         if (!kav->unsafe) {
             safe_set_pass(kav->len);
             if (kav->verbose) {
                 if (kav->file) {
-                    write_file(p->Pass, p->file);
-                    printf("Password: %s\nWith length: %d written to file: %s\n",p->Pass, kav->len, p->file);
+                    write_file(p->Pass, file);
+                    printf("Password: %s\nWith length: %d written to file: %s\n",p->Pass, kav->len, file);
                 }
                 else {
                     printf("Password: %s\nWith length: %d\n",p->Pass, kav->len);
@@ -258,13 +252,12 @@ void k_parse(char *msg, kavpass *kav) {
             else {
                 printf("%s\n",p->Pass);
             }
-        }
-        else {
+        } else {
             unsafe_set_pass(kav->len);
             if (kav->verbose) {
                 if (kav->file) {
-                    write_file(p->Pass, p->file);
-                    printf("Unsafe password: %s\nWith lengh: %d written to file: %s\n",p->Pass, kav->len, p->file); 
+                    write_file(p->Pass, file);
+                    printf("Unsafe password: %s\nWith lengh: %d written to file: %s\n",p->Pass, kav->len, file); 
                 }
                 else {
                     printf("Unsafe password: %s\nWith lengh: %d\n",p->Pass, kav->len);
@@ -282,12 +275,12 @@ void k_parse(char *msg, kavpass *kav) {
     else if (strncmp(token, "clear", 5) == 0) {
         #define ESC    "\x1b"
         printf(ESC"[2J"ESC"[?6h");
-        return;
     }
     else {
         printf("Command not recognized!\n");
-        return;
     }
+    return;
+    free(file);
 }
 void k_init(kavpass *kav) {
     kav->prompt = "> ";
@@ -347,6 +340,7 @@ void safe_return_ran(int line) {
                 break;
             case 5:
                 p->tmp_c = p->test_symb[pull_rand() % strlen(p->test_symb)];
+                break;
             default:
                 p->failed = true;
         }
@@ -371,6 +365,7 @@ void unsafe_return_ran(int line) {
                 break;
             case 5:
                 p->tmp_c = p->test_symb[rand() % strlen(p->test_symb)];
+                break;
             default:
                 p->failed = true;
         }
@@ -385,23 +380,49 @@ void usage() {
     printf("\t-v\t--verbose\t\t|\tVerbose output.\n"); 
     printf("\t-e\t--extra-unicode\t\t|\tAdds extra unicode char support.\n");
     printf("\t-F\t--force-unsafe-rng NUM\t|\tReplaces --length and forces the use of an unsafe RNG.\n");
+    printf("\t-p\t--prefix NUM\t|\tSets a prefix for the password.\n");
+    printf("\t-c\t--color COLOR\t|\tSets a color for output.\n");
     printf("\t-i\t--interactive\t\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 void safe_set_pass(size_t len) {
     LOOP:
-    for(size_t i = 0; i < len; i++) {
-        if (p->test_symb_b) {
-            safe_return_ran(pull_rand() % 5 + 1);
-        } else {
-            safe_return_ran(pull_rand() % 4 + 1);
+    if (p->prefix) {
+        for(size_t i = 0; i < len + strlen(p->pref); i++) {
+            if (i >= strlen(p->pref)) {
+                if (p->test_symb_b) {
+                    safe_return_ran(pull_rand() % 5 + 1);
+                } else {
+                    safe_return_ran(pull_rand() % 4 + 1);
+                }
+                p->Pass[i] = p->tmp_c;
+                if (p->failed) {
+                    return;
+                }
+            }
+            else {
+                p->Pass[i] = p->pref[i];
+            }
         }
-        p->Pass[i] = p->tmp_c;
-        if (p->failed) {
-            return;
+        if (strlen(p->Pass) != len + strlen(p->pref)) {
+            goto LOOP;
+            printf("not");
         }
-    }
-    if (strlen(p->Pass) != len) {
-        goto LOOP;
+    } 
+    else {
+        for(size_t i = 0; i < len; i++) {
+            if (p->test_symb_b) {
+                safe_return_ran(pull_rand() % 5 + 1);
+            } else {
+                safe_return_ran(pull_rand() % 4 + 1);
+            }
+            p->Pass[i] = p->tmp_c;
+            if (p->failed) {
+                return;
+            }
+        }
+        if (strlen(p->Pass) != len) {
+            goto LOOP;
+        }
     }
 }
 void unsafe_set_pass(size_t len) {
@@ -422,6 +443,7 @@ void unsafe_set_pass(size_t len) {
         goto LOOP;
     }
 }
+
 struct option long_options[] = {
     { "length",             required_argument,  0,      'l' },
     { "help",               no_argument,        0,      'h' },
@@ -431,6 +453,7 @@ struct option long_options[] = {
     { "extra-unicode",      no_argument,        0,      'e' },
     { "interactive",        no_argument,        0,      'i' },
     { "color",              required_argument,  0,      'c' },
+    { "prefix",             required_argument,  0,      'p' },
     { 0, 0, 0, 0 }
 };
 void write_file(char *str, char *path) {
@@ -441,7 +464,7 @@ void write_file(char *str, char *path) {
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
-    while((c = getopt_long(argc, argv, "F:hc:ievo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "F:hp:c:ievo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
                 unsafe = true;
@@ -455,6 +478,10 @@ int main(int argc, char **argv) {
                 break;
             case 'h':
                 usage(); 
+                break;
+            case 'p':
+                p->prefix = true;
+                p->pref = optarg;
                 break;
             case 'c':
                 char *token = optarg;
@@ -481,6 +508,8 @@ int main(int argc, char **argv) {
                 init(p,BUF_SIZE);
                 k_ctl(kav);
                 free(kav);
+                return 0;
+                break;
             case 'e':
                 p->test_symb_b = true;
                 break;
@@ -556,6 +585,7 @@ int main(int argc, char **argv) {
             }
         }
     }
+    switch_color(0);
     if (p->Pass) {
         free(p->Pass);
     }
