@@ -4,7 +4,6 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
-
 #define RESET  "\x1B[0m"
 #define RED  "\x1B[31m"
 #define GREEN  "\x1B[32m"
@@ -13,7 +12,6 @@
 #define MAGENTA  "\x1B[35m"
 #define CYAN  "\x1B[36m"
 #define WHITE  "\x1B[37m"
-
 void switch_color(int col) {
     col = col >= 0 ? col : 0;
     switch(col) {
@@ -45,10 +43,8 @@ void switch_color(int col) {
             return;
     }
 }
-
-
 const size_t BUF_SIZE = 2096;
-const char *version = "v1.0.0";
+const char *version = "v1.0.1";
 typedef struct {
     char *symb;
     char *l_let;
@@ -64,7 +60,6 @@ typedef struct {
     char *test_symb;
     bool test_symb_b;
 } Password;
-
 void i_help() {
     printf("Available commands in kavpass interactive mode:\n");
     printf("\tset\t|\tThis command can take any of the following options:\n");
@@ -76,7 +71,6 @@ void i_help() {
     printf("\t\t•\tprompt\t\t|\t[prompt] sets the interactive prompt.\n");
     printf("\tgenerate\t|\tgenerates the prompt with select options.\n");
 }
-
 int pull_rand();
 void init(Password *pass, size_t BUFFER);
 void safe_return_ran(int line);
@@ -343,6 +337,7 @@ void safe_return_ran(int line) {
                 break;
             default:
                 p->failed = true;
+                break;
         }
     }
 }
@@ -368,6 +363,7 @@ void unsafe_return_ran(int line) {
                 break;
             default:
                 p->failed = true;
+                break;
         }
     }
 }
@@ -443,7 +439,6 @@ void unsafe_set_pass(size_t len) {
         goto LOOP;
     }
 }
-
 struct option long_options[] = {
     { "length",             required_argument,  0,      'l' },
     { "help",               no_argument,        0,      'h' },
