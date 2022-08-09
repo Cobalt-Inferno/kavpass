@@ -15,6 +15,14 @@ LFLAGS = -Wall $(IV) -lm
 SRC := $(wildcard $(SRCDIR)/*.c)
 INC := $(wildcard $(INCDIR)/*.h)
 OBJS := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+
+
+all:
+	mkdir -p $(OBJDIR)
+	mkdir -p $(BINDIR)
+	mkdir -p $(INCDIR)
+
+
 $(BINDIR)/$(TARGET) : $(OBJS)
 	$(LINKER) $(OBJS) $(LFLAGS) -o $@
 	@echo "Linking complete."
