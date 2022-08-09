@@ -3,7 +3,7 @@ BUILD_DIR := ./build
 SRC_DIR := ./src
 SRCS := $(shell find $(SRC_DIR) -name '*.c')
 OBJS := $(SRCS:%.c=%.o)
-
+RM := rm -rf
 CFLAGS := -march=native -O2 -Wall -Wextra
 TARGET := kavpass
 
