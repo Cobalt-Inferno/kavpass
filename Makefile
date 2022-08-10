@@ -17,15 +17,12 @@ INC := $(wildcard $(INCDIR)/*.h)
 OBJS := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 
-
-
 $(BINDIR)/$(TARGET) : $(OBJS)
-	mkdir -p ${INCDIR}
-	mkdir -p ${OBJDIR}
-	mkdir -p ${BINDIR}
+	mkdir -p $(INCDIR) $(BINDIR) $(OBJDIR)
 	$(LINKER) $(OBJS) $(LFLAGS) -o $@
 	@echo "Linking complete."
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+	mkdir -p $(INCDIR) $(BINDIR) $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiliation complete."
 .PHONY: install
