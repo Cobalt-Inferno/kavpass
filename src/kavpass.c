@@ -113,6 +113,18 @@ void k_parse(char *msg, kavpass *kav) {
                 strcat(token, " ");
                 kav->prompt = token;
             }
+            else if (strncmp(token, "prefix", 6) == 0) {
+                token = strtok(NULL, " ");
+                if (token == NULL) {
+                    fprintf(stderr, "No prefix provided.\n");
+                    return;
+                }
+                if (token[strlen(token - 1)] == '\n') {
+                    token[strlen(token - 1)] = '\0';
+                }
+                p->prefix = true;
+                p->pref = token;
+            } 
             else if (strncmp(token, "extra-unicode", 13) == 0) {
                 token = strtok(NULL, " ");
                 if (token[strlen(token) - 1] == '\n') {
@@ -185,6 +197,9 @@ void k_parse(char *msg, kavpass *kav) {
                 if (token == NULL) {
                     fprintf(stderr, "No length specified.\n");
                     return;
+                }
+                if (token[strlen(token - 1)] == '\n') {
+                    token[strlen(token - 1)] = '\0';
                 }
                 if (atoi(token) > 2096) {
                     fprintf(stderr, "Length cannot be over 2096.\n");
