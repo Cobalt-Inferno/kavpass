@@ -26,6 +26,8 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	mkdir -p $(INCDIR) $(BINDIR) $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiliation complete."
+.PHONY: install
+install:
 	mkdir -p ${INSTALLDIR}
 	cp -r $(BINDIR)/$(TARGET) ${INSTALLDIR}
 	$(RM) ${DESTDIR}${PREFIX}/bin/kavpass
