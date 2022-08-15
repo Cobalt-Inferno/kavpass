@@ -26,11 +26,10 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	mkdir -p $(INCDIR) $(BINDIR) $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiliation complete."
-
-mkdir -p ${INSTALLDIR}
-cp -r $(BINDIR)/$(TARGET) ${INSTALLDIR}
-$(RM) ${DESTDIR}${PREFIX}/bin/kavpass
-@echo "Installation complete."
+	mkdir -p ${INSTALLDIR}
+	cp -r $(BINDIR)/$(TARGET) ${INSTALLDIR}
+	$(RM) ${DESTDIR}${PREFIX}/bin/kavpass
+	@echo "Installation complete."
 .PHONY: clean
 clean:
 	$(RM) $(OBJS)
