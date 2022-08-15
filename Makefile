@@ -16,7 +16,7 @@ SRC := $(wildcard $(SRCDIR)/*.c)
 INC := $(wildcard $(INCDIR)/*.h)
 OBJS := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
-mkdir -p $(INCDIR) $(BINDIR) $(OBJDIR)
+
 
 $(BINDIR)/$(TARGET) : $(OBJS)
 	mkdir -p $(INCDIR) $(BINDIR) $(OBJDIR)
