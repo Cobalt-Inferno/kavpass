@@ -32,7 +32,7 @@ doas make uninstall
 
 ### Package Manager
 
-kavpass is available in the [Arch User Repository](https://aur.archlinux.org/packages/kavpass)
+kavpass is available in the [Arch User Repository](https://aur.archlinux.org/packages/kavpass) (currently broken for some reason)
 
 # Contributing and TODO
 
