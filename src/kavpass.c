@@ -390,8 +390,8 @@ void usage() {
     printf("\t-v\t--verbose\t\t|\tVerbose output.\n"); 
     printf("\t-e\t--extra-unicode\t\t|\tAdds extra unicode char support.\n");
     printf("\t-F\t--force-unsafe-rng NUM\t|\tReplaces --length and forces the use of an unsafe RNG.\n");
-    printf("\t-p\t--prefix NUM\t|\tSets a prefix for the password.\n");
-    printf("\t-c\t--color COLOR\t|\tSets a color for output.\n");
+    printf("\t-p\t--prefix NUM\t\t|\tSets a prefix for the password.\n");
+    printf("\t-c\t--color COLOR\t\t|\tSets a color for output.\n");
     printf("\t-i\t--interactive\t\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 void safe_set_pass(size_t len) {
