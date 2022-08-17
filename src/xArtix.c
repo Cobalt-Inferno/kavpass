@@ -492,7 +492,7 @@ int main(int argc, char **argv) {
                 p->prefix = true;
                 p->pref = optarg;
                 break;
-            case 'c':
+            case 'c': ;
                 char *token = optarg;
                 if (strncmp(token, "red", 3) == 0) {
                     switch_color(1);
@@ -512,7 +512,7 @@ int main(int argc, char **argv) {
                     fprintf(stderr, "Color: \"%s\" is not recognized.\n", token);
                 }
                 break;
-            case 'i':
+            case 'i': ;
                 xArtix *kav = malloc(256 * sizeof(xArtix));
                 init(p,BUF_SIZE);
                 k_ctl(kav);
