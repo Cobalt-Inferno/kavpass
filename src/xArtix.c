@@ -473,6 +473,7 @@ void write_file(char *str, char *path) {
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
+    // loop and parse command line arguments
     while((c = getopt_long(argc, argv, "F:hp:c:ievo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
@@ -492,7 +493,7 @@ int main(int argc, char **argv) {
                 p->prefix = true;
                 p->pref = optarg;
                 break;
-            case 'c':
+            case 'c': ;
                 char *token = optarg;
                 if (strncmp(token, "red", 3) == 0) {
                     switch_color(1);
@@ -512,7 +513,7 @@ int main(int argc, char **argv) {
                     fprintf(stderr, "Color: \"%s\" is not recognized.\n", token);
                 }
                 break;
-            case 'i':
+            case 'i': ;
                 xArtix *kav = malloc(256 * sizeof(xArtix));
                 init(p,BUF_SIZE);
                 k_ctl(kav);
@@ -593,6 +594,10 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "Password not generated. Run $ xArtix -h\n");
             }
         }
+    }
+    // if no command line arguments are given, display usage help
+    if (!commence){
+        usage();
     }
     switch_color(0);
     if (p->Pass) {
