@@ -473,6 +473,7 @@ void write_file(char *str, char *path) {
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
+    // loop and parse command line arguments
     while((c = getopt_long(argc, argv, "F:hp:c:ievo:l:", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
@@ -593,6 +594,10 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "Password not generated. Run $ xArtix -h\n");
             }
         }
+    }
+    // if no command line arguments are given, display usage help
+    if (!commence){
+        usage();
     }
     switch_color(0);
     if (p->Pass) {
