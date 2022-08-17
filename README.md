@@ -2,8 +2,8 @@
 
 A simple and quick password generator written in C.
 
-## Install
-
+## Install from Source:
+### Arch linux
 ```console
 git clone https://github.com/kavulox/xArtix.git
 
@@ -14,25 +14,39 @@ make
 doas make install
 ```
 
+### Debian/Ubuntu
+```console
+git clone https://github.com/kavulox/xArtix.git
+
+cd xArtix 
+
+make
+
+sudo make install
+```
+
+## Install from Package Manager
+
+xArtix is available in the [Arch User Repository](https://aur.archlinux.org/packages/xArtix) (currently broken for some reason)
+
 ## Usage
 
 ```console
 xArtix --help
 ```
 
-## Uninstall
-
-
-
-### From source
+## Uninstall from Source:
+### Arch Linux
 
 ```console
 doas make uninstall
 ```
 
-### Package Manager
+### Debian/Ubuntu
 
-xArtix is available in the [Arch User Repository](https://aur.archlinux.org/packages/xArtix) (currently broken for some reason)
+```console
+sudo make uninstall
+```
 
 # Contributing and TODO
 
