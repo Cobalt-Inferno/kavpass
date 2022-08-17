@@ -1,0 +1,5 @@
+# make and build files and folder
+*.o
+bin/
+include/
+obj/
