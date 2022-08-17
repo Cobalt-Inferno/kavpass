@@ -1,7 +1,7 @@
 CFLAGS = -march=native -O2 -Wall -Wextra
 PREFIX = /usr/local
 INSTALLDIR = $(PREFIX)/bin
-TARGET = kavpass
+TARGET = xArtix
 CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra 
 RM = rm -rf

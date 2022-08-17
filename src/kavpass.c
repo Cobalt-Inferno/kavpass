@@ -61,7 +61,7 @@ typedef struct {
     bool test_symb_b;
 } Password;
 void i_help() {
-    printf("Available commands in kavpass interactive mode:\n");
+    printf("Available commands in xArtix interactive mode:\n");
     printf("\t\t•\tset verbose\t\t|\t[true/false] sets the status of verbose output.\n");
     printf("\t\t•\tset length\t\t|\t[num] sets the length for generated passwords.\n");
     printf("\t\t•\tset output\t\t|\t[file] sets the file to output to.\n");
@@ -86,8 +86,8 @@ typedef struct {
     bool verbose;
     bool unsafe;
     bool file;
-} kavpass;
-void k_parse(char *msg, kavpass *kav) {
+} xArtix;
+void k_parse(char *msg, xArtix *kav) {
     char *file = (char*) malloc(256*(sizeof(char*)));
     char *token = strtok(msg, " ");
     if (strncmp(token, "\n", 1) == 0 || strncmp(token, "\0", 1) == 0) {
@@ -290,11 +290,11 @@ void k_parse(char *msg, kavpass *kav) {
     return;
     free(file);
 }
-void k_init(kavpass *kav) {
+void k_init(xArtix *kav) {
     kav->prompt = "> ";
     kav->input = ";";
 }
-void k_ctl(kavpass *kav) { 
+void k_ctl(xArtix *kav) { 
     char buff[256];
     k_init(kav);
     while((strncmp(kav->input, "exit",4))) {
@@ -382,8 +382,8 @@ void unsafe_return_ran(int line) {
     }
 }
 void usage() {
-    printf("Program: kavpass | version: %s\n", version);
-    printf("Usage: kavpass -[hloveFpci]\n");
+    printf("Program: xArtix | version: %s\n", version);
+    printf("Usage: xArtix -[hloveFpci]\n");
     printf("\t-h\t--help\t\t\t|\tDisplays the help message.\n");
     printf("\t-l\t--length NUM\t\t|\tSpecifies the length.\n");
     printf("\t-o\t--output\t\t|\tFile to output to.\n");
@@ -513,7 +513,7 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 'i':
-                kavpass *kav = malloc(256 * sizeof(kavpass));
+                xArtix *kav = malloc(256 * sizeof(xArtix));
                 init(p,BUF_SIZE);
                 k_ctl(kav);
                 free(kav);
@@ -568,7 +568,7 @@ int main(int argc, char **argv) {
                 }
             }
             else {
-                fprintf(stderr, "Password not generated. Run $ kavpass -h\n");
+                fprintf(stderr, "Password not generated. Run $ xArtix -h\n");
             }
         }
     } else {
@@ -590,7 +590,7 @@ int main(int argc, char **argv) {
                 }
             }
             else {
-                fprintf(stderr, "Password not generated. Run $ kavpass -h\n");
+                fprintf(stderr, "Password not generated. Run $ xArtix -h\n");
             }
         }
     }
