@@ -30,7 +30,6 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 install:
 	mkdir -p ${INSTALLDIR}
 	cp -r $(BINDIR)/$(TARGET) ${INSTALLDIR}
-	$(RM) ${DESTDIR}${PREFIX}/bin/kavpass
 	@echo "Installation complete."
 .PHONY: clean
 clean:
