@@ -11,10 +11,19 @@
 
 
 const char *version = "v1.0.1";
+struct option long_options[] = {
+    { "length",             required_argument,  0,      'l' },
+    { "help",               no_argument,        0,      'h' },
+    { "output",             required_argument,  0,      'o' },
+    { "force-unsafe-rng",   required_argument,  0,      'F' },
+    { "verbose",            no_argument,        0,      'v' },
+    { "extra-unicode",      no_argument,        0,      'e' },
+    { "interactive",        no_argument,        0,      'i' },
+    { "color",              required_argument,  0,      'c' },
+    { "prefix",             required_argument,  0,      'p' },
+    { 0, 0, 0, 0 }
+};
 
-
-void usage();
-// void write_file(char *sr, char *path);
 Password pass, *p = &pass;
 
 
@@ -32,23 +41,6 @@ void usage() {
     printf("\t-i\t--interactive\t\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
 }
 
-struct option long_options[] = {
-    { "length",             required_argument,  0,      'l' },
-    { "help",               no_argument,        0,      'h' },
-    { "output",             required_argument,  0,      'o' },
-    { "force-unsafe-rng",   required_argument,  0,      'F' },
-    { "verbose",            no_argument,        0,      'v' },
-    { "extra-unicode",      no_argument,        0,      'e' },
-    { "interactive",        no_argument,        0,      'i' },
-    { "color",              required_argument,  0,      'c' },
-    { "prefix",             required_argument,  0,      'p' },
-    { 0, 0, 0, 0 }
-};
-// void write_file(char *str, char *path) {
-//     FILE *ptr = fopen(path, "w");
-//     fputs(str, ptr);
-//     fclose(ptr);
-// }
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;

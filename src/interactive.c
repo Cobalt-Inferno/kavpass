@@ -12,7 +12,6 @@ void i_help() {
 }
 
 void write_file(char *str, char *path) {
-    printf("writing to file %s\n", path);
     FILE *ptr = fopen(path, "w");
     fputs(str, ptr);
     fclose(ptr);
@@ -189,31 +188,35 @@ void k_parse(xArtix *kav, Password *pass) {
     else if (strncmp(token, "generate", 8) == 0) {
         if (!kav->unsafe) {
             safe_set_pass(pass);
-            if (kav->verbose) {
-                if (kav->file) {
-                    write_file(pass->Pass, pass->file);
+            if (kav->file) {
+                write_file(pass->Pass, pass->file);
+                if (kav->verbose) {
                     printf("Password: %s\nWith length: %d written to file: %s\n",pass->Pass, pass->len, pass->file);
+                } else {
+                    printf("%s\n",pass->Pass);
                 }
-                else {
+            } else {
+                if (kav->verbose){
                     printf("Password: %s\nWith length: %d\n",pass->Pass, pass->len);
+                } else {
+                    printf("%s\n",pass->Pass);
                 }
-            }
-            else {
-                printf("%s\n",pass->Pass);
             }
         } else {
             unsafe_set_pass(pass);
-            if (kav->verbose) {
-                if (kav->file) {
-                    write_file(pass->Pass, pass->file);
+            if (kav->file) {
+                write_file(pass->Pass, pass->file);
+                if (kav->verbose) {
                     printf("Unsafe password: %s\nWith lengh: %d written to file: %s\n",pass->Pass, pass->len, pass->file); 
+                } else {
+                    printf("%s\n",pass->Pass);
                 }
-                else {
+            } else {
+                if (kav->verbose){
                     printf("Unsafe password: %s\nWith lengh: %d\n",pass->Pass, pass->len);
+                } else {
+                    printf("%s\n",pass->Pass);
                 }
-            }
-            else {
-                printf("%s\n",pass->Pass);
             }
         }
         return;
