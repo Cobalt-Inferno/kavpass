@@ -55,6 +55,7 @@ sudo make uninstall
 - Full MacOS support
 - Parse files with instructions
 - Fix bugs in interactive mode
+- Setup docs
 
 ## Contributing
 
