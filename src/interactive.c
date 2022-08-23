@@ -21,7 +21,6 @@ void write_file2(Password *pass) {
 }
 
 void k_parse(xArtix *kav, Password *pass) {
-    //char *file = (char*) malloc(256*(sizeof(char*)));
     char *token = strtok(kav->input, " ");
     if (strncmp(token, "\n", 1) == 0 || strncmp(token, "\0", 1) == 0) {
         return;
@@ -151,10 +150,6 @@ void k_parse(xArtix *kav, Password *pass) {
                 if (token[strlen(token) - 1] == '\n') {
                     token[strlen(token) - 1] = '\0';
                 }
-                /*file = token;
-                printf("file:%s|\n", file);*/
-                //pass->file =token;
-                printf("asd\n");
                 strcpy(pass->file, token);
                 kav->file = true;
             }
@@ -244,15 +239,8 @@ void k_init(xArtix *kav) {
 void k_ctl(xArtix *kav, Password *pass) { 
     char buff[256];
     k_init(kav);
-    // debug stuff
-    pass->len=12;
-    kav->verbose = true;
-    // end debug stuff
 
     while((strncmp(kav->input, "exit",4))) {
-        // debug
-        printf("\nfile: %s\n", pass->file);
-        //end debug
         printf("%s",kav->prompt);
         fgets(buff, 256, stdin);
         kav->input = buff;
