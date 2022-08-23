@@ -35,6 +35,11 @@ install:
 clean:
 	$(RM) $(OBJS)
 	@echo "Clean complete."
+.PHONY: fullclean
+fullclean:
+	$(RM) $(OBJS)
+	$(RM) $(BINDIR)/$(TARGET) 
+	@echo "Clean complete."
 .PHONY: uninstall
 uninstall:
 	$(RM) ${INSTALLDIR}/$(TARGET)
