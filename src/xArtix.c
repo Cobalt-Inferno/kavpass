@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
     // loop and parse command line arguments
-    if (argc <= 1) {
+    if (argc == 1) {
         usage();
         return EXIT_FAILURE;
     }
