@@ -27,7 +27,7 @@ sudo make install
 
 ## Install from Package Manager
 
-xArtix is available in the [Arch User Repository](https://aur.archlinux.org/packages/xArtix) (currently broken for some reason)
+// nil
 
 ## Usage
 
