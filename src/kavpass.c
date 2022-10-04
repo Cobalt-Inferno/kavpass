@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
                 break;
             case 'f':
                 char *ff = md5sum(optarg);
-                bool tmp = quickscan(ff);
+                tmp = quickscan(ff);
                 if (isdir(optarg)) {
                     fprintf(stderr, "Cannot scan a directory with --file flag.\n");
                 }
