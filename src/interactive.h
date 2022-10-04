@@ -14,7 +14,7 @@ typedef struct {
     bool verbose;
     bool unsafe;
     bool file;
-} xArtix;
+} __attribute__((packed)) xArtix;
 
 
 void i_help();

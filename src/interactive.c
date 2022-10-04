@@ -39,7 +39,7 @@ void k_parse(xArtix *kav, Password *pass) {
                     fprintf(stderr, "No prompt provided.\n");
                     return;
                 }
-                int len = strlen(token);
+                size_t len = strlen(token);
                 if (token[len - 1] == '\n') {
                     token[len - 1] = '\0';
                 }

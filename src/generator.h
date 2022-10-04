@@ -21,7 +21,7 @@ typedef struct {
     char tmp_c;
     char *test_symb;
     bool test_symb_b;
-} Password;
+} __attribute__((packed)) Password;
 
 void init(Password *pass);
 int pull_rand();
