@@ -7,6 +7,10 @@
 #include "color.h"
 #include "generator.h"
 #include "interactive.h"
+#include "curler.h"
+#include "top_level_scan.h"
+#include "hasher.h"
+#include "scanner.h"
 
 
 const char *version = "v1.0.1";
@@ -20,6 +24,12 @@ struct option long_options[] = {
     { "interactive",        no_argument,        0,      'i' },
     { "color",              required_argument,  0,      'c' },
     { "prefix",             required_argument,  0,      'p' },
+    { "directory",             required_argument,  0,      'd' },
+    { "memory-map",             required_argument,  0,      'm' },
+    { "update",             no_argument,  0,      'u' },
+    { "quick",             required_argument,  0,      'q' },
+    { "file",             required_argument,  0,      'f' },
+    { "help",               no_argument,        0,      'h' },
     { 0, 0, 0, 0 }
 };
 
@@ -38,17 +48,22 @@ void usage() {
     printf("\t-p\t--prefix NUM\t\t|\tSets a prefix for the password.\n");
     printf("\t-c\t--color COLOR\t\t|\tSets a color for output.\n");
     printf("\t-i\t--interactive\t\t|\tEnters an interactive mode. (IN DEVELOPMENT)\n");
+    printf("\t-d\t--directory\t\t|\tTakes a specified directory to scan.\n");
+    printf("\t-f\t--file\t\t\t|\tTakes a single file to scan.\n");
+    printf("\t-m\t--memory-map\t\t|\tLike directory, but just shows the md5s of files in the directory.\n");
+    printf("\t-q\t--quick\t\t\t|\tUses an experimental way of scanning files with a 3-5x speed increase.\n");
+    printf("\t-u\t--update\t\t|\tUpdates our hash list. May take a while.\n");
+
 }
 
 int main(int argc, char **argv) {
     int c, option_index = 0;
     bool unsafe = false, verbose = false, made_pass = false, tmp = false, commence = false;
-    // loop and parse command line arguments
     if (argc == 1) {
         usage();
         return EXIT_FAILURE;
     }
-    while((c = getopt_long(argc, argv, "F:hp:c:ievo:l:", long_options, &option_index)) != -1) {
+    while((c = getopt_long(argc, argv, "F:hp:c:ievo:l:d:m:uq:f", long_options, &option_index)) != -1) {
         switch(c) {
             case 'F':
                 unsafe = true;
@@ -111,6 +126,34 @@ int main(int argc, char **argv) {
                 made_pass = true;
                 p->len = atoi(optarg);
                 break;
+            case 'd':
+                GetFiles(optarg, 0, false, 0);
+                break;
+            case 'm':
+                char *bufe = tmpbuff();
+                GetFiles(optarg, 0, true, bufe);
+                break;
+            case 'u':
+                xcurl("https://virusshare.com/hashfiles/unpacked_hashes.md5","/tmp/data");
+                break;
+            case 'q':
+                char *buf = loadbuf();
+                GetFiles(optarg, 0, true, buf);
+                break;
+            case 'f':
+                char *ff = md5sum(optarg);
+                bool tmp = quickscan(ff);
+                if (isdir(optarg)) {
+                    fprintf(stderr, "Cannot scan a directory with --file flag.\n");
+                }
+                else if (tmp) {
+                    printf("File: %s \e[37;1m[ \e[31;1mFLAGGED \e[37;1m]\e[0m\n", optarg);
+                }
+                else {
+                    printf("File: %s \e[37;1m[ \e[32;1mOK \e[37;1m] \e[0m\n", optarg);
+                }
+                break;
+ 
             case ':':
                 usage();
                 break;
