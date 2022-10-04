@@ -38,7 +38,7 @@ Password pass, *p = &pass;
 
 void usage() {
     printf("Program: kavpass | version: %s\n", version);
-    printf("Usage: kavpass -[hloveFpci]\n");
+    printf("Usage: kavpass -[hloveFpcidmuqf]\n");
     printf("\t-h\t--help\t\t\t|\tDisplays the help message.\n");
     printf("\t-l\t--length NUM\t\t|\tSpecifies the length.\n");
     printf("\t-o\t--output\t\t|\tFile to output to.\n");
