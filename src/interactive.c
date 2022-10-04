@@ -1,7 +1,7 @@
 #include "interactive.h"
 
 void i_help() {
-    printf("Available commands in xArtix interactive mode:\n");
+    printf("Available commands in kavpass interactive mode:\n");
     printf("\t\t•\tset verbose\t\t|\t[true/false] sets the status of verbose output.\n");
     printf("\t\t•\tset length\t\t|\t[num] sets the length for generated passwords.\n");
     printf("\t\t•\tset output\t\t|\t[file] sets the file to output to.\n");
@@ -20,7 +20,7 @@ void write_file2(Password *pass) {
     printf("Writing pass: %s\nIn file: %s\n", pass->Pass, pass->file);
 }
 
-void k_parse(xArtix *kav, Password *pass) {
+void k_parse(kavpass *kav, Password *pass) {
     char *token = strtok(kav->input, " ");
     if (strncmp(token, "\n", 1) == 0 || strncmp(token, "\0", 1) == 0) {
         return;
@@ -230,13 +230,13 @@ void k_parse(xArtix *kav, Password *pass) {
     //free(file);
 }
 
-void k_init(xArtix *kav) {
+void k_init(kavpass *kav) {
     kav->prompt = "> ";
     kav->input = ";";
 
 }
 
-void k_ctl(xArtix *kav, Password *pass) { 
+void k_ctl(kavpass *kav, Password *pass) { 
     char buff[256];
     k_init(kav);
 
@@ -249,7 +249,7 @@ void k_ctl(xArtix *kav, Password *pass) {
 }
 
 void interactive_mode(Password *pass){
-    xArtix *kav = malloc(256 * sizeof(xArtix));
+    kavpass *kav = malloc(256 * sizeof(xArtix));
 
     init(pass);
     k_ctl(kav, pass);

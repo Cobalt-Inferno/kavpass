@@ -14,14 +14,14 @@ typedef struct {
     bool verbose;
     bool unsafe;
     bool file;
-} __attribute__((packed)) xArtix;
+} __attribute__((packed)) kavpass;
 
 
 void i_help();
 void write_file(char *str, char *path);
-void k_parse(xArtix *kav, Password *pass);
-void k_init(xArtix *kav);
-void k_ctl(xArtix *kav, Password *pass);
+void k_parse(kavpass *kav, Password *pass);
+void k_init(kavpass *kav);
+void k_ctl(kavpass *kav, Password *pass);
 void interactive_mode(Password * pass);
 
 #endif

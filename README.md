@@ -1,13 +1,13 @@
-# xArtix 
+# kavpass 
 
 A simple and quick password generator written in C.
 
 ## Install from Source:
 ### Arch linux
 ```console
-git clone https://github.com/kavulox/xArtix.git
+git clone https://github.com/kavulox/kavpass.git
 
-cd xArtix 
+cd kavpass 
 
 make
 
@@ -16,9 +16,9 @@ doas make install
 
 ### Debian/Ubuntu
 ```console
-git clone https://github.com/kavulox/xArtix.git
+git clone https://github.com/kavulox/kavpass.git
 
-cd xArtix 
+cd kavpass 
 
 make
 
@@ -32,7 +32,7 @@ sudo make install
 ## Usage
 
 ```console
-xArtix --help
+kavpass --help
 ```
 
 ## Uninstall from Source:
