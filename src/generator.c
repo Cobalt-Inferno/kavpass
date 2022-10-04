@@ -129,7 +129,7 @@ void unsafe_return_ran(int line, Password *pass) {
 
 void unsafe_set_pass(Password *pass) {
  LOOP:
-  srand(time(NULL));
+  srand((unsigned)time(NULL));
   for(int i = 0; i < pass->len; i++) {
     if (pass->test_symb_b) {
       unsafe_return_ran(rand() % 5 + 1, pass);

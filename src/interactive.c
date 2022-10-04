@@ -249,7 +249,7 @@ void k_ctl(kavpass *kav, Password *pass) {
 }
 
 void interactive_mode(Password *pass){
-    kavpass *kav = malloc(256 * sizeof(xArtix));
+    kavpass *kav = malloc(256 * sizeof(kavpass));
 
     init(pass);
     k_ctl(kav, pass);
