@@ -26,6 +26,7 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	mkdir -p $(INCDIR) $(OBJDIR)
 	$(CC) $(CFLAGS) $(LFLAGS) -c $< -o $@
 	@echo "Compiliation complete."
+
 .PHONY: install
 install:
 	mkdir -p ${DESTDIR}/${PREFIX}/bin
