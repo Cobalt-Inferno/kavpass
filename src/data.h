@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <openssl/aes.h>
+#include <openssl/evp.h>
 #define MAX 5096
 #define MAX_STR_BUFF 5096
 typedef struct __item item_t;

@@ -1,19 +1,45 @@
 #include "data.h"
 
 
-unsigned char *encrypt(unsigned char *key, unsigned char *txt) {
-  unsigned char buff[strlen((const char*)key) + 10];
-  AES_KEY ek;
-  AES_set_encrypt_key(key, MAX_STR_BUFF, &ek);
-  AES_encrypt(txt, buff, &ek);
-  return buff;
+int encrypt(unsigned char *key, int keylen, unsigned char *salt, EVP_CIPHER_CTX *e_ctx, EVP_CIPHER_CTL *d_ctx) {
+  int i, vcount = 5;
+  unsigned char key[32], iv[32];
+  i = EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha1(), salt, key, keylen, vcount, key, iv);
+  if (i != 32) {
+    printf("Key size is %d bits - should be 256 bits\n", i);
+    return -1;
+  }
+  EVP_CIPHER_CTX_init(e_ctx);
+  EVP_EncryptInit_ex(e_ctx, EVP_aes_256_cbc(), NULL, key, iv);
+  EVP_CIPHER_CTX_init(d_ctx);
+  EVP_DecryptInit_ex(d_ctx, EVP_aes_256_cbc(), NULL, key, iv);
+  return 0;
 }
+unsigned char *aes_encrypt(EVP_CIPHER_CTX *e, unsigned char *plaintext, int *len) {
+  int c_len = *len + AES_BLOCK_SIZE, f_len = 0;
+  unsigned char *ciphertext = malloc(c_len);
+  EVP_EncryptInit_ex(e, NULL, NULL, NULL, NULL);
+  EVP_EncryptUpdate(e, ciphertext, &c_len, plaintext, *len);
+  EVP_EncryptFinal_ex(e, ciphertext+c_len, &f_len);
+  *len = c_len + f_len;
+  return ciphertext;
 
+}
+unsigned char *aes_decrypt(EVP_CIPHER_CTX *e, unsigned char *ciphertext, int *len) {
+  int p_len = *len, f_len = 0;
+  unsigned char *plaintext = malloc(p_len);
+  EVP_DecryptInit_ex(e, NULL, NULL, NULL, NULL);
+  EVP_DecryptUpdate(e, plaintext, &p_len, ciphertext, *len);
+  EVP_DecryptFinal_ex(e, plaintext+p_len, &f_len);
+  *len = p_len + f_len;
+  return plaintext;
+}
 
 unsigned long hash(char *str) {
   unsigned long v = 0;
   for (int i = 0; str[i]; i++) {
     v ^= (v << (v / 2));
+    v = v >> 2;
   }
   return v % MAX;
 }
@@ -163,7 +189,7 @@ void db_insert(table_t *table, char *key, char *value) {
     if (strcmp(current_item->key, key) == 0) {
       free(table->items[index]->val);
       table->items[index]->val = (char*) calloc (strlen(value) + 1, sizeof(char));
-      strcpy(table->items[index]->val, value);
+      strcpy(table->items[index]->val, (unsigned char*) value);
       free_item(item);
       return;
     }
